@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Ophcrack
+Comment=Microsoft Windows password cracker
+Exec=ophcrack
+Icon=ophcrack
+Terminal=false
+Type=Application
+Categories=System;Security;GTK;
+Keywords=Hacking; Security; Windows;
+StartupNotify=true
+X-XFCE-Source=file:///usr/share/applications/ophcrack.desktop
