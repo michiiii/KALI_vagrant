@@ -22,3 +22,5 @@ rm -r ~/.config/xfce4
 cp -r ~/KALI_vagrant/XFCE_config/xfce4 ~/.config/
 sudo reboot now
 ```
+There is complete randomness....
+sometimes it works ... sometimes it doesn´t 
