@@ -12,33 +12,16 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 # CUSTOM PROMPT
-OS_ICON = "#" 
+
 ## regular user account; orange background
-PS1="\n \[\033[0;34m\]╭─\[\033[0;33m\]\[\033[0;30m\]\[\033[43m\] $OS_ICON \d  \u \[\033[0m\]\[\033[0;33m\]\[\033[44m\]\[\033[0;34m\]\[\033[44m\]\[\033[0;30m\]\[\033[44m\] \w \[\033[0m\]\[\033[0;34m\] \n \[\033[0;34m\]╰> \[\033[1;36m\]\$ \[\033[0m\]"
+PS1="\n \[\033[0;34m\]╭─\[\033[0;33m\]\[\033[0;30m\]\[\033[43m\] \d  \u \[\033[0m\]\[\033[0;33m\]\[\033[44m\]\[\033[0;34m\]\[\033[44m\]\[\033[0;30m\]\[\033[44m\] \w \[\033[0m\]\[\033[0;34m\] \n \[\033[0;34m\]╰> \[\033[1;36m\]\$ \[\033[0m\]"
 ## root user account; red background
-#PS1="\n \[\033[0;34m\]╭─\[\033[0;31m\]\[\033[0;37m\]\[\033[41m\] $OS_ICON \d  \u \[\033[0m\]\[\033[0;31m\]\[\033[44m\]\[\033[0;34m\]\[\033[44m\]\[\033[0;30m\]\[\033[44m\] \w \[\033[0m\]\[\033[0;34m\] \n \[\033[0;34m\]╰> \[\033[1;36m\]\$ \[\033[0m\]"
-
-# CUSTOM FUNCTIONS
-## find nmapscripts
-function nmapscripts() {
-    find /usr/share/nmap/scripts/ -exec basename {} \; | grep -i "$1" | column
-}
-## rewrite find command
-function find() {
-    if [ $# = 1 ];
-    then
-        command find . -iname "*$@*"
-    else
-        command find "$@"
-    fi
-}
-
+#PS1="\n \[\033[0;34m\]╭─\[\033[0;31m\]\[\033[0;37m\]\[\033[41m\] $OS_ICON \d  \u \[\033[0m\]\[\033[0;31m\]\[\033[44m\]\[\033[0;34m\]\[\033[44m\]\[\033[0;30m\]\[\033[44m\] \w \[\033[0m\]\[\033[0;34m\] \n \[\033[0;34m\]╰ \[\033[1;36m\]\$ \[\033[0m\]"
 
 
 # CUSTOM ALIASES
 alias ll="ls -l"
 alias la="ls -la"
-
 command -v lsd &> /dev/null && alias ls='lsd --group-dirs first -l'
 command -v htop &> /dev/null && alias top='htop'
 
