@@ -14,8 +14,8 @@ curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/ba
 sudo -i
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases_root" > /root/.bash_aliases
 reboot now
-sudo -i
 rm -r ~/.config/xfce4 
 cp -r ~/KALI_vagrant/XFCE_config/xfce4 ~/.config/
+sudo reboot now
 ```
 
