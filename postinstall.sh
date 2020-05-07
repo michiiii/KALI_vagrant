@@ -295,6 +295,15 @@ apt -y -qq install zip unzip \
 apt -y -qq install terminator \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
+
+##### Install ohmyzsh
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}zip${RESET} & ${GREEN}unzip${RESET} ~ CLI file extractors"
+apt -y -qq install zsh git curl \
+  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+chsh -s "$(which zsh)"
+
+
 ##### Install VPN support
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}VPN${RESET} support for Network-Manager"
 for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc network-manager-openconnect network-manager-iodine; do
