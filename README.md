@@ -9,18 +9,17 @@ $ vagrant plugin install vagrant-vbguest
 
 After the install run the following commands from the terminal:
 ```
-git clone https://github.com/michiiii/KALI_vagrant
-sudo cp /home/vagrant/.bashrc /root/.bashrc
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases
+curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc" > ~/.zshrc
+source .zshrc
 sudo -i
-curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases_root" > /root/.bash_aliases
-reboot now
-```
-Finally get the user settings
-```
+curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > /root/.bash_aliases
+curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc_root" > ~/.zshrc
+source .zshrc
+exit
 rm -r ~/.config/xfce4 
 cp -r ~/KALI_vagrant/XFCE_config/xfce4 ~/.config/
 sudo reboot now
 ```
-There is complete randomness....
-sometimes it works ... sometimes it doesn´t 
+Finally everything should be cool
