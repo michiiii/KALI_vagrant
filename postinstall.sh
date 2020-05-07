@@ -184,6 +184,15 @@ apt -y -qq install sublime-merge \
 apt -y -qq install flameshot \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
+##### Install python3.8
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}python3.8${RESET} ~ screenshot tool"
+apt -y -qq install python3.8 \
+  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+apt -y -qq install python3-pip \
+  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+apt -y -qq install python3-six \
+  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+
 
 # Bloodhound
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Bloodhound${RESET} ~ AD Graph Visialization Tool"
