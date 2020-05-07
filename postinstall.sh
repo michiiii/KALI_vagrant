@@ -163,9 +163,6 @@ source "${file}" || source ~/.bashrc
 apt -y -qq install fonts-hack-ttf 
 wget https://github.com/Peltoche/lsd/releases/download/0.16.0/lsd_0.16.0_amd64.deb
 dpkg -i lsd_0.16.0_amd64.deb
-cp /home/vagrant/.bashrc /root/.bashrc
-curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_PostInstall/master/bash_aliases" > ~/.bash_aliases
-curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_PostInstall/master/bash_aliases_root" > /root/.bash_aliases
 
 #### Install sublime
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sublime${RESET} ~ text editor"
@@ -207,11 +204,13 @@ apt -y -qq install bloodHound \
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
 apt update
-apt-get remove -y docker docker-engine docker.io
-apt-get install -y docker-ce
-docker run hello-world
+apt -y -qq install -y docker-ce
 systemctl enable docker
-
+apt -y -qq install docker-ce docker-ce-cli containerd.io -y
+curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker run hello-world
 
 
 
