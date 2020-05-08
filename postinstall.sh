@@ -5,16 +5,9 @@ keyboardApple=false         # Using a Apple/Macintosh keyboard (non VM)?        
 keyboardLayout="de"         # Set keyboard layout                                       [ --keyboard de]
 timezone="Europe/Berlin"    # Set timezone location                                     [ --timezone Europe/Berlin ]
 
-gitEmail="info@michi-ritter.de"
-gitUser="michiiii"
-
-
-
 #### Remember Current directory
 currDir=`pwd`
 echo "Your current directory is $currDir"
-
-
 
 ##### (Cosmetic) Colour output
 RED="\033[01;31m"      # Issues/Errors
@@ -26,8 +19,6 @@ RESET="\033[00m"       # Normal
 
 STAGE=0                                                         # Where are we up to
 TOTAL=$( grep '(${STAGE}/${TOTAL})' $0 | wc -l );(( TOTAL-- ))  # How many things have we got todo
-
-
 
 ##### Check user inputs
 if [[ -n "${timezone}" && ! -f "/usr/share/zoneinfo/${timezone}" ]]; then
@@ -42,8 +33,6 @@ elif [[ -n "${keyboardLayout}" && -e /usr/share/X11/xkb/rules/xorg.lst ]]; then
   fi
 fi
 
-
-
 ##### Check if we are running as root - else this script will fail (hard!)
 if [[ "${EUID}" -ne 0 ]]; then
   echo -e ' '${RED}'[!]'${RESET}" This script must be ${RED}run as root${RESET}" 1>&2
@@ -55,7 +44,6 @@ else
 fi
 
 
-
 ##### Update location information - set either value to "" to skip.
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Updating ${GREEN}location information${RESET}"
 #--- Configure keyboard layout (Apple)
@@ -64,7 +52,6 @@ if [ "${keyboardApple}" != "false" ]; then
   file=/etc/default/keyboard; #[ -e "${file}" ] && cp -n $file{,.bkup}
   sed -i 's/XKBVARIANT=".*"/XKBVARIANT="mac"/' "${file}"
 fi
-
 
 #--- Configure keyboard layout (location)
 if [[ -n "${keyboardLayout}" ]]; then
@@ -178,7 +165,6 @@ apt -y -qq install sublime-text \
 apt -y -qq install sublime-merge \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-
 ##### Install flameshot
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}flameshot${RESET} ~ screenshot tool"
 apt -y -qq install flameshot \
@@ -199,9 +185,7 @@ apt -y -qq install pipenv
 apt -y -qq install bloodHound \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-
 ##### Get Basics
-
 # Docker
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Setting up ${GREEN}Docker${RESET}"
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
@@ -214,8 +198,6 @@ curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compo
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker run hello-world
-
-
 
 ##### Install vim - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}vim${RESET} ~ CLI text editor"
@@ -265,38 +247,30 @@ file=/etc/bash.bashrc; [ -e "${file}" ] && cp -n $file{,.bkup}
 grep -q '^EDITOR' "${file}" 2>/dev/null \
   || echo 'EDITOR="vim"' >> "${file}"
 
-
-
 ##### Install go
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}go${RESET} ~ programming language"
 apt -y -qq install golang \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 
 ##### Install sparta
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sparta${RESET} ~ GUI automatic wrapper"
 apt -y -qq install sparta \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-
 ##### Install filezilla
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}FileZilla${RESET} ~ GUI file transfer"
 apt -y -qq install filezilla \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 
 ##### Install zip & unzip
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}zip${RESET} & ${GREEN}unzip${RESET} ~ CLI file extractors"
 apt -y -qq install zip unzip \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-
-
 ##### Install terminator
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}zip${RESET} & ${GREEN}unzip${RESET} ~ CLI file extractors"
 apt -y -qq install terminator \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 
 ##### Install ohmyzsh
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}zip${RESET} & ${GREEN}unzip${RESET} ~ CLI file extractors"
@@ -305,7 +279,6 @@ apt -y -qq install zsh git curl \
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 chsh -s "$(which zsh)"
 
-
 ##### Install VPN support
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}VPN${RESET} support for Network-Manager"
 for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc network-manager-openconnect network-manager-iodine; do
@@ -313,12 +286,10 @@ for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc ne
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
 
-
 ##### Install hashid
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}hashid${RESET} ~ identify hash types"
 apt -y -qq install hashid \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 
 ##### Setup SSH
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Setting up ${GREEN}SSH${RESET} ~ CLI access"
@@ -337,9 +308,10 @@ ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -P "" >/dev/null
 apt -y -qq install cowsay \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 echo "Moo" | /usr/games/cowsay > /etc/motd
+
 #--- Change SSH settings
 file=/etc/ssh/sshd_config; [ -e "${file}" ] && cp -n $file{,.bkup}
-sed -i 's/^PermitRootLogin .*/PermitRootLogin yes/g' "${file}"      # Accept password login (overwrite Debian 8+'s more secure default option...)
+sed -i 's/^PermitRootLogin .*/PermitRootLogin yes/g' "${file}"      # Accept password login (overwrite Debian's more secure default option...)
 sed -i 's/^#AuthorizedKeysFile /AuthorizedKeysFile /g' "${file}"    # Allow for key based login
 #sed -i 's/^Port .*/Port 2222/g' "${file}"
 #--- Enable ssh at startup
@@ -348,8 +320,6 @@ systemctl enable ssh
 ##### Done!
 echo -e "\n ${YELLOW}[i]${RESET} Don't forget to:"
 echo -e " ${YELLOW}[i]${RESET} + Check the above output (Did everything install? Any errors? (${RED}HINT: What's in RED${RESET}?)"
-echo -e " ${YELLOW}[i]${RESET} + Manually install: Nessus, Nexpose, and/or Metasploit Community"
-echo -e " ${YELLOW}[i]${RESET} + Agree/Accept to: Maltego, OWASP ZAP, w3af, PyCharm, etc"
 echo -e " ${YELLOW}[i]${RESET} + Setup git:   ${YELLOW}git config --global user.name <name>;git config --global user.email <email>${RESET}"
 echo -e " ${YELLOW}[i]${RESET} + ${BOLD}Change default passwords${RESET}: PostgreSQL/MSF, MySQL, OpenVAS, BeEF XSS, etc"
 echo -e " ${YELLOW}[i]${RESET} + ${YELLOW}Reboot${RESET}"
