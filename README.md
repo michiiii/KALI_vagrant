@@ -7,7 +7,7 @@ Beforehand you need to install the vbguest plugin
 $ vagrant plugin install vagrant-vbguest
 ```
 
-After the install run the following commands from the Terminator:
+After the install run the following commands from the vagrant ssh:
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases
