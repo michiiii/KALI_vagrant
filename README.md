@@ -19,7 +19,6 @@ curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zs
 source .zshrc
 exit
 git clone https://github.com/michiiii/KALI_vagrant.git
-rm -r ~/.config/xfce4 
 cp -r ~/KALI_vagrant/XFCE_config/xfce4 ~/.config/
 sudo reboot now
 ```
