@@ -163,7 +163,8 @@ source "${file}" || source ~/.bashrc
 apt -y -qq install fonts-hack-ttf 
 wget https://github.com/Peltoche/lsd/releases/download/0.16.0/lsd_0.16.0_amd64.deb
 dpkg -i lsd_0.16.0_amd64.deb
-
+apt-get install fonts-powerline
+apt-get install fonts-font-awesome
 
 #### Install sublime
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sublime${RESET} ~ text editor"
@@ -175,8 +176,7 @@ apt -y -qq install sublime-text \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 apt -y -qq install sublime-merge \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-apt-get install fonts-powerline
-apt-get install fonts-font-awesome
+
 
 ##### Install flameshot
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}flameshot${RESET} ~ screenshot tool"
