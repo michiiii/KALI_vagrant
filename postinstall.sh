@@ -163,8 +163,9 @@ source "${file}" || source ~/.bashrc
 apt -y -qq install fonts-hack-ttf 
 wget https://github.com/Peltoche/lsd/releases/download/0.16.0/lsd_0.16.0_amd64.deb
 dpkg -i lsd_0.16.0_amd64.deb
-apt-get install fonts-powerline
-apt-get install fonts-font-awesome
+apt -y -qq install fonts-powerline
+apt -y -qq install fonts-font-awesome
+apt -y -qq  install grc
 
 #### Install sublime
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sublime${RESET} ~ text editor"
@@ -191,7 +192,7 @@ apt -y -qq install python3-pip \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 apt -y -qq install python3-six \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
+apt -y -qq install pipenv
 
 # Bloodhound
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Bloodhound${RESET} ~ AD Graph Visialization Tool"
