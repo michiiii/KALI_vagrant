@@ -1,9 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+
+# vagrant plugin install vagrant-disksize
+# vagrant plugin install vagrant-vbguest
+
 Vagrant.configure("2") do |config|
   config.vm.box = "kalilinux/rolling"
   config.vm.hostname = "p41n"
+  config.disksize.size = "120GB"
 
 
   # Use bridge network. In VirtualBox
