@@ -203,6 +203,11 @@ docker run hello-world
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}vim${RESET} ~ CLI text editor"
 apt -y -qq install vim || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
+
+##### Install dbneaver - all users
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}dbeaver${RESET} ~ database explorer"
+apt -y -qq install dbeaver || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+
 #--- Configure vim
 file=/etc/vim/vimrc; [ -e "${file}" ] && cp -n $file{,.bkup}   #~/.vimrc
 ([[ -e "${file}" && "$(tail -c 1 ${file})" != "" ]]) && echo >> "${file}"
