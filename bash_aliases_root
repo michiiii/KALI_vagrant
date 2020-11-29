@@ -50,17 +50,13 @@ alias web="sudo python -m SimpleHTTPServer "
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 alias exip="curl https://ipinfo.io/ip"
-alias unzip="7z x -o* "
 alias untar="tar -xvf "
 
-alias onetwopunch="sudo /opt/tools/misc/onetwopunch/./onetwopunch.sh"
 alias cap2hccapx="/usr/share/hashcat/master/hashcat-utils-master/src/cap2hccapx.bin"
 alias nmap="sudo nmap"
 alias install="sudo apt-get install"
 alias search="sudo apt-cache search"
-alias responder="sudo python /opt/tools/exploit/Responder/Responder.py"
 
 alias htb.vpn="sudo openvpn /opt/vpn/htb.ovpn"
-alias vpn="sudo openvpn /opt/vpn/ptf.ovpn"
 alias work="cd /opt/projects/"
 alias htb="cd /opt/htb"
