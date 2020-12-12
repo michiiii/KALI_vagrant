@@ -242,6 +242,11 @@ apt -y -qq install terminator \
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq{RESET} ~ jquery CLI"
 apt -y -qq install jq \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+  
+  
+##### Install evil-winrm
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}evil-winrm{RESET} ~ The ultimate WinRM shell for hacking/pentesting"
+gem install evil-winrm
 
 ##### Install ohmyzsh
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}zip${RESET} & ${GREEN}unzip${RESET} ~ CLI file extractors"
