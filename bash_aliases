@@ -160,6 +160,7 @@ function dockershellshhere() {
     docker run --rm -it --entrypoint=/bin/sh -v `pwd`:/${dirname} -w /${dirname} "$@"
 }
 
+alias cme="docker run --rm -it byt3bl33d3r/crackmapexec"
 alias impacket="docker run --rm -it rflathers/impacket"
 
 smbservehere() {
@@ -181,3 +182,4 @@ echo "webdavhere - spawns webdav server in current dir"
 echo "reqdump - spawns a simple HTTP Request Dumper. It’s s simple JavaScript server that echos any HTTP request it receives it to stdout."
 echo "postfiledumphere - spawns a web server for exifiltration - exifiltration on target via curl --data-binary"
 echo "exip - returns external ip address"
+echo "cme - crackmapexec docker"
