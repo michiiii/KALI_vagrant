@@ -87,22 +87,6 @@ systemctl disable ntp 2>/dev/null
 #--- Only used for stats at the end
 start_time=$(date +%s)
 
-
-
-
-
-##### Install kernel headers
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}kernel headers${RESET}"
-apt -y -qq install make gcc "linux-headers-$(uname -r)" \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-if [[ $? -ne 0 ]]; then
-  echo -e ' '${RED}'[!]'${RESET}" There was an ${RED}issue installing kernel headers${RESET}" 1>&2
-  echo -e " ${YELLOW}[i]${RESET} Are you ${YELLOW}USING${RESET} the ${YELLOW}latest kernel${RESET}?"
-  echo -e " ${YELLOW}[i]${RESET} ${YELLOW}Reboot${RESET} your machine"
-  #exit 1
-  sleep 30s
-fi
-
 ##### Install virtualbox guest additions
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Virtualbox Guest Utilities${RESET}"
 apt -y -qq install virtualbox-guest-utils || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
@@ -134,17 +118,6 @@ grep -q "HISTFILESIZE" "${file}" \
 #--- Apply new configs
 source "${file}" || source ~/.bashrc
 
-
-##### Install bash completion - all users
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}bash completion${RESET} ~ tab complete CLI commands"
-apt -y -qq install bash-completion \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-file=/etc/bash.bashrc; [ -e "${file}" ] && cp -n $file{,.bkup}   #~/.bashrc
-sed -i '/# enable bash completion in/,+7{/enable bash completion/!s/^#//}' "${file}"
-#--- Apply new configs
-source "${file}" || source ~/.bashrc
-
-
 ##### Install colorful linux - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}colorful linux${RESET}"
 apt -y -qq install fonts-hack-ttf 
@@ -154,16 +127,14 @@ apt -y -qq install fonts-powerline
 apt -y -qq install fonts-font-awesome
 apt -y -qq  install grc
 
-#### Install sublime
+#### Install vscode
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sublime${RESET} ~ text editor"
-wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-apt -y -qq install apt-transport-https
 apt -y -qq update
-apt -y -qq install sublime-text \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-apt -y -qq install sublime-merge \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+apt -y -qq install curl gpg software-properties-common apt-transport-https
+curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" | tee /etc/apt/sources.list.d/vscode.list
+sudo apt update
+sudo apt install code
 
 ##### Install flameshot
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}flameshot${RESET} ~ screenshot tool"
@@ -179,11 +150,6 @@ apt -y -qq install python3-pip \
 apt -y -qq install python3-six \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 apt -y -qq install pipenv
-
-# Bloodhound
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Bloodhound${RESET} ~ AD Graph Visialization Tool"
-apt -y -qq install bloodHound \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
 ##### Get Basics
 # Docker
@@ -257,11 +223,6 @@ grep -q '^EDITOR' "${file}" 2>/dev/null \
 apt -y -qq install golang \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-##### Install sparta
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sparta${RESET} ~ GUI automatic wrapper"
-apt -y -qq install sparta \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 ##### Install filezilla
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}FileZilla${RESET} ~ GUI file transfer"
 apt -y -qq install filezilla \
@@ -286,7 +247,7 @@ chsh -s "$(which zsh)"
 
 ##### Install VPN support
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}VPN${RESET} support for Network-Manager"
-for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc network-manager-openconnect network-manager-iodine; do
+for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc network-manager-openconnect; do
   apt -y -qq install "${FILE}" \
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
