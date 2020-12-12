@@ -128,7 +128,7 @@ apt -y -qq install fonts-font-awesome
 apt -y -qq  install grc
 
 #### Install vscode
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}sublime${RESET} ~ text editor"
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}vscode${RESET} ~ text editor"
 apt -y -qq update
 apt -y -qq install curl gpg software-properties-common apt-transport-https
 curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
