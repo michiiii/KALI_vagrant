@@ -172,3 +172,12 @@ alias nginxhere='docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" r
 alias webdavhere='docker run --rm -it -p 80:80 -v "${PWD}:/srv/data/share" rflathers/webdav'
 alias reqdump='docker run --rm -it -p 80:3000 rflathers/reqdump'
 alias postfiledumphere='docker run --rm -it -p80:3000 -v "${PWD}:/data" rflathers/postfiledump'
+
+
+echo "dockershellhere - spawns dockershell for a container and includes the current directory"
+echo "nginxhere - spawns nginx http server in current dir"
+echo "smbservehere - spawns smb server in current dir"
+echo "webdavhere - spawns webdav server in current dir"
+echo "reqdump - spawns a simple HTTP Request Dumper. It’s s simple JavaScript server that echos any HTTP request it receives it to stdout."
+echo "postfiledumphere - spawns a web server for exifiltration - exifiltration on target via curl --data-binary"
+echo "exip - returns external ip address"
