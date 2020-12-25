@@ -239,13 +239,13 @@ apt -y -qq install terminator \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
   
 ##### Install jq
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq{RESET} ~ jquery CLI"
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq${RESET} ~ jquery CLI"
 apt -y -qq install jq \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
   
   
 ##### Install evil-winrm
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}evil-winrm{RESET} ~ The ultimate WinRM shell for hacking/pentesting"
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}evil-winrm${RESET} ~ The ultimate WinRM shell for hacking/pentesting"
 gem install evil-winrm
 
 ##### Install ohmyzsh
@@ -267,29 +267,26 @@ done
 apt -y -qq install hashid \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-##### Setup SSH
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Setting up ${GREEN}SSH${RESET} ~ CLI access"
-apt -y -qq install openssh-server \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-#--- Wipe current keys
-rm -f /etc/ssh/ssh_host_*
-find ~/.ssh/ -type f ! -name authorized_keys -delete 2>/dev/null
-#--- Generate new keys
-ssh-keygen -b 4096 -t rsa -f /etc/ssh/ssh_host_key -P "" >/dev/null
-ssh-keygen -b 4096 -t rsa -f /etc/ssh/ssh_host_rsa_key -P "" >/dev/null
-ssh-keygen -b 1024 -t dsa -f /etc/ssh/ssh_host_dsa_key -P "" >/dev/null
-ssh-keygen -b 521 -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -P "" >/dev/null
-ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -P "" >/dev/null
+##### Install covenant
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Covenant C2${RESET} ~ C2 Framework"
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+wget -q https://packages.microsoft.com/config/debian/10/prod.list
+sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
+sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+apt -y -qq update
+apt -y install apt-transport-https\n
+apt -y -qq update
+apt -y install dotnet-sdk-3.1
+git clone --recurse-submodules https://github.com/cobbr/Covenant
+
+
 #--- Change MOTD
 apt -y -qq install cowsay \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 echo "Moo" | /usr/games/cowsay > /etc/motd
 
-#--- Change SSH settings
-file=/etc/ssh/sshd_config; [ -e "${file}" ] && cp -n $file{,.bkup}
-sed -i 's/^PermitRootLogin .*/PermitRootLogin yes/g' "${file}"      # Accept password login (overwrite Debian's more secure default option...)
-sed -i 's/^#AuthorizedKeysFile /AuthorizedKeysFile /g' "${file}"    # Allow for key based login
-#sed -i 's/^Port .*/Port 2222/g' "${file}"
 #--- Enable ssh at startup
 systemctl enable ssh
 
@@ -302,4 +299,3 @@ echo -e " ${YELLOW}[i]${RESET} + ${YELLOW}Reboot${RESET}"
 echo -e '\n'${BLUE}'[*]'${RESET}' '${BOLD}'Done!'${RESET}'\n\a'
 reboot now
 exit 0
-
