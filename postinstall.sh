@@ -279,6 +279,7 @@ apt -y -qq update
 apt -y install apt-transport-https\n
 apt -y -qq update
 apt -y install dotnet-sdk-3.1
+cd /root/
 git clone --recurse-submodules https://github.com/cobbr/Covenant
 
 
