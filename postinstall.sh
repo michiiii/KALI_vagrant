@@ -125,7 +125,7 @@ wget https://github.com/Peltoche/lsd/releases/download/0.16.0/lsd_0.16.0_amd64.d
 dpkg -i lsd_0.16.0_amd64.deb
 apt -y -qq install fonts-powerline
 apt -y -qq install fonts-font-awesome
-apt -y -qq  install grc
+apt -y -qq install grc
 
 #### Install vscode
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}vscode${RESET} ~ text editor"
