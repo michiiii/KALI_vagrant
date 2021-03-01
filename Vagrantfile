@@ -37,14 +37,19 @@ Vagrant.configure("2") do |config|
     vb.name = "KaliLinux_Vagrant"
     # Hide the VirtualBox GUI when booting the machine
     vb.gui = true
-
     vb.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
-
     #Customize CPUs assigned to machine
     vb.cpus = 2
     # Customize the amount of memory on the VM:
     vb.memory = "8192"
   end
-
+   
+  config.vm.provider "vmware_desktop" do |v, override|
+      v.vmx["displayname"] = "kalilinux_prod"
+      v.memory = 8096
+      v.cpus = 2
+      v.gui = true
+      v.enable_vmrun_ip_lookup = false
+  end
 
 end
