@@ -243,11 +243,6 @@ for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc ne
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
 
-##### Install hashid
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}hashid${RESET} ~ identify hash types"
-apt -y -qq install hashid \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 #--- Change MOTD
 apt -y -qq install cowsay \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
