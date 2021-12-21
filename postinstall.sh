@@ -87,16 +87,6 @@ systemctl disable ntp 2>/dev/null
 #--- Only used for stats at the end
 start_time=$(date +%s)
 
-##### Install virtualbox guest additions
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Virtualbox Guest Utilities${RESET}"
-apt -y -qq install virtualbox-guest-utils || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-if [[ $? -ne 0 ]]; then
-  echo -e ' '${RED}'[!]'${RESET}" There was an ${RED}issue installing Virtualbox Guest Utilities${RESET}" 1>&2
-  echo -e " ${YELLOW}[i]${RESET} Are you ${YELLOW}USING${RESET} the ${YELLOW}latest kernel${RESET}?"
-  echo -e " ${YELLOW}[i]${RESET} ${YELLOW}Reboot${RESET} your machine"
-  #exit 1
-  sleep 30s
-fi
 
 ##### Configure bash - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Configuring ${GREEN}bash${RESET} ~ CLI shell"
@@ -141,16 +131,6 @@ sudo apt install code
 apt -y -qq install flameshot \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
-##### Install python3.8
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}python3.8${RESET} ~ screenshot tool"
-apt -y -qq install python3.8 \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-apt -y -qq install python3-pip \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-apt -y -qq install python3-six \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-apt -y -qq install pipenv
-
 ##### Get Basics
 # Docker
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Setting up ${GREEN}Docker${RESET}"
@@ -170,7 +150,7 @@ docker run hello-world
 apt -y -qq install vim || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
 
-##### Install dbneaver - all users
+##### Install dbeaver - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}dbeaver${RESET} ~ database explorer"
 apt -y -qq install dbeaver || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
@@ -211,6 +191,7 @@ grep -q '^set pastetoggle=<F9>' "${file}" 2>/dev/null \
   || echo -e 'set pastetoggle=<F9>' >> "${file}"                                                         # Hotkey - turning off auto indent when pasting
 grep -q '^:command Q q' "${file}" 2>/dev/null \
   || echo -e ':command Q q' >> "${file}"                                                                 # Fix stupid typo I always make
+
 #--- Set as default editor
 export EDITOR="vim"   #update-alternatives --config editor
 file=/etc/bash.bashrc; [ -e "${file}" ] && cp -n $file{,.bkup}
@@ -266,22 +247,6 @@ done
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}hashid${RESET} ~ identify hash types"
 apt -y -qq install hashid \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
-##### Install covenant
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Covenant C2${RESET} ~ C2 Framework"
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
-mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-wget -q https://packages.microsoft.com/config/debian/10/prod.list
-sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
-sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
-apt -y -qq update
-apt -y install apt-transport-https\n
-apt -y -qq update
-apt -y install dotnet-sdk-3.1
-cd /root/
-git clone --recurse-submodules https://github.com/cobbr/Covenant
-
 
 #--- Change MOTD
 apt -y -qq install cowsay \
