@@ -148,32 +148,33 @@ alias htb.vpn="sudo openvpn /opt/vpn/htb.ovpn"
 alias work="cd /opt/projects/"
 alias htb="cd /opt/htb"
 
-alias dockershell="docker run --rm -i -t --entrypoint=/bin/bash"
-alias dockershellsh="docker run --rm -i -t --entrypoint=/bin/sh"
+alias dockershell="sudo docker run --rm -i -t --entrypoint=/bin/bash"
+alias dockershellsh="sudo docker run --rm -i -t --entrypoint=/bin/sh"
 
 function dockershellhere() {
     dirname=${PWD##*/}
-    docker run --rm -it --entrypoint=/bin/bash -v `pwd`:/${dirname} -w /${dirname} "$@"
+    sudo docker run --rm -it --entrypoint=/bin/bash -v `pwd`:/${dirname} -w /${dirname} "$@"
 }
 function dockershellshhere() {
     dirname=${PWD##*/}
-    docker run --rm -it --entrypoint=/bin/sh -v `pwd`:/${dirname} -w /${dirname} "$@"
+    sudo docker run --rm -it --entrypoint=/bin/sh -v `pwd`:/${dirname} -w /${dirname} "$@"
 }
 
-alias cme="docker run --rm -it byt3bl33d3r/crackmapexec"
-alias impacket="docker run --rm -it rflathers/impacket"
+alias cme="sudo docker run --rm -it byt3bl33d3r/crackmapexec"
+alias impacket="sudo docker run --rm -it rflathers/impacket"
 
 smbservehere() {
     local sharename
     [[ -z $1 ]] && sharename="SHARE" || sharename=$1
-    docker run --rm -it -p 445:445 -v "${PWD}:/tmp/serve" rflathers/impacket smbserver.py -smb2support $sharename /tmp/serve
+    sudo docker run --rm -it -p 445:445 -v "${PWD}:/tmp/serve" rflathers/impacket smbserver.py -smb2support $sharename /tmp/serve
 }
 
-alias nginxhere='docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" rflathers/nginxserve'
-alias webdavhere='docker run --rm -it -p 80:80 -v "${PWD}:/srv/data/share" rflathers/webdav'
-alias reqdump='docker run --rm -it -p 80:3000 rflathers/reqdump'
-alias postfiledumphere='docker run --rm -it -p80:3000 -v "${PWD}:/data" rflathers/postfiledump'
+alias nginxhere='sudo docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" rflathers/nginxserve'
+alias webdavhere='sudo docker run --rm -it -p 80:80 -v "${PWD}:/srv/data/share" rflathers/webdav'
+alias reqdump='sudo docker run --rm -it -p 80:3000 rflathers/reqdump'
+alias postfiledumphere='sudo docker run --rm -it -p80:3000 -v "${PWD}:/data" rflathers/postfiledump'
 alias testssl-docker='sudo docker run --rm -ti drwetter/testssl.sh'
+alias autocompose 'sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
 
 echo "dockershellhere - spawns dockershell for a container and includes the current directory"
 echo "nginxhere - spawns nginx http server in current dir"
@@ -184,3 +185,4 @@ echo "postfiledumphere - spawns a web server for exifiltration - exifiltration o
 echo "exip - returns external ip address"
 echo "cme - crackmapexec docker"
 echo "testssl-docker - testssl docker version"
+echo "autocompose - automatically create a docker compose file from a running container"
