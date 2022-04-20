@@ -174,7 +174,9 @@ alias webdavhere='sudo docker run --rm -it -p 80:80 -v "${PWD}:/srv/data/share" 
 alias reqdump='sudo docker run --rm -it -p 80:3000 rflathers/reqdump'
 alias postfiledumphere='sudo docker run --rm -it -p80:3000 -v "${PWD}:/data" rflathers/postfiledump'
 alias testssl-docker='docker run --rm -ti -v "${PWD}:/data" drwetter/testssl.sh -s -f -p -S -P -h -U --ip one --htmlfile /data/ --logfile /data/ --jsonfile-pretty /data/ --csvfile /data/ --warnings=batch'
-alias autocompose 'sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
+alias autocompose='sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
+alias cme='sudo docker run --rm -it --entrypoint=/usr/local/bin/cme --name crackmapexec-run -v "${PWD}/CrackMapExec-data:/root/.cme" byt3bl33d3r/crackmapexec'
+
 
 echo "dockershellhere - spawns dockershell for a container and includes the current directory"
 echo "nginxhere - spawns nginx http server in current dir"
@@ -186,3 +188,4 @@ echo "exip - returns external ip address"
 echo "cme - crackmapexec docker"
 echo "testssl-docker - testssl docker version"
 echo "autocompose - automatically create a docker compose file from a running container"
+echo "cme - CrackMapExec docker edition"
