@@ -193,11 +193,11 @@ grep -q '^:command Q q' "${file}" 2>/dev/null \
   || echo -e ':command Q q' >> "${file}"                                                                 # Fix stupid typo I always make
 
 #--- Set as default editor
-export EDITOR="vim"   #update-alternatives --config editor
+export EDITOR="subl"   #update-alternatives --config editor
 file=/etc/bash.bashrc; [ -e "${file}" ] && cp -n $file{,.bkup}
 ([[ -e "${file}" && "$(tail -c 1 ${file})" != "" ]]) && echo >> "${file}"
 grep -q '^EDITOR' "${file}" 2>/dev/null \
-  || echo 'EDITOR="vim"' >> "${file}"
+  || echo 'EDITOR="subl"' >> "${file}"
 
 ##### Install go
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}go${RESET} ~ programming language"
@@ -243,10 +243,7 @@ for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc ne
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
 
-#--- Change MOTD
-apt -y -qq install cowsay \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-echo "Moo" | /usr/games/cowsay > /etc/motd
+apt -y -qq install grc
 
 #--- Enable ssh at startup
 systemctl enable ssh
