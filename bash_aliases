@@ -1,7 +1,15 @@
 
+
 # BASIC OS Commands
 alias ll="ls -l"
 alias la="ls -la"
+
+alias chmod='chmod -c'
+alias rw-='chmod 600'
+alias rwx='chmod 700'
+alias r--='chmod 644'
+alias r-x='chmod 755'
+
 command -v lsd &> /dev/null && alias ls='lsd --group-dirs first -l'
 command -v htop &> /dev/null && alias top='htop'
 
@@ -100,21 +108,12 @@ echo "wordlists - cd straight into the wordlists dir"
 alias wordlists="cd /usr/share/wordlists/"
 
 
-####################
-## OS services
-####################
-## ssh-start
-alias ssh-start="sudo systemctl restart ssh"
-alias ssh-stop="sudo systemctl stop ssh"
-
-## samba
-alias smb-start="sudo systemctl restart smbd nmbd"
-alias smb-stop="sudo systemctl stop smbd nmbd"
-
-
 ###############
 # HELPER
 ###############
+echo -e "${BROWN}\n\n\n========================${NC}"
+echo -e "${BROWN}[ - OS HELPER - ]${NC}"
+echo -e "${BROWN}========================\n${NC}"
 
 ## List open ports
 echo "ports - netstats open tcp ports"
@@ -143,9 +142,9 @@ alias untar="tar -xvf "
 BROWN='\033[0;33m'
 NC='\033[0m'
 
-echo -e "${BROWN}========================${NC}"
+echo -e "${BROWN}\n\n\n========================${NC}"
 echo -e "${BROWN}[ - DOCKER - ]${NC}"
-echo -e "${BROWN}========================${NC}"
+echo -e "${BROWN}========================\n${NC}"
 
 
 echo "dockershell - spawns dockershell for a container in it's current working directory - dockershellhere <containername>"
@@ -170,9 +169,9 @@ echo "autocompose - automatically create a docker compose file from a running co
 alias autocompose='sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
 
 
-echo -e "${BROWN}========================${NC}"
+echo -e "${BROWN}\n\n\n========================${NC}"
 echo -e "${BROWN}[ - SERVICES - ]${NC}"
-echo -e "${BROWN}========================${NC}"
+echo -e "${BROWN}========================\n${NC}"
 
 echo "nginxhere - spawns nginx http server in current dir"
 alias nginxhere='sudo docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" rflathers/nginxserve'
@@ -193,11 +192,23 @@ alias reqdump='sudo docker run --rm -it -p 80:3000 rflathers/reqdump'
 echo "postfiledumphere - spawns a web server for exifiltration - exifiltration on target via curl --data-binary"
 alias postfiledumphere='sudo docker run --rm -it -p80:3000 -v "${PWD}:/data" rflathers/postfiledump'
 
+## ssh-start
+echo "ssh-start - start OS SSH service"
+alias ssh-start="sudo systemctl restart ssh"
+echo "ssh-stop - stop OS SSH service"
+alias ssh-stop="sudo systemctl stop ssh"
+
+## samba
+echo "smb-start - start OS SSH service"
+alias smb-start="sudo systemctl restart smbd nmbd"
+echo "smb-stop - stop OS SSH service"
+alias smb-stop="sudo systemctl stop smbd nmbd"
 
 
-echo -e "${BROWN}==============================${NC}"
+
+echo -e "${BROWN}\n\n\n========================${NC}"
 echo -e "${BROWN}[ - INFRASTRUCTURE PENTEST - ]${NC}"
-echo -e "${BROWN}==============================${NC}"
+echo -e "${BROWN}========================\n${NC}"
 
 echo "nmapfastscan - runs NMAP scanner; fast top1000 TCP; specify <IP's>"
 alias nmapfastscan="docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
@@ -229,18 +240,13 @@ function getports() {
         fi
 }
 
-
-
-echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
-alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
-
 echo "startnessus - Starts nessus on TCP/8834 - ensure you change the ACTIVATION_CODE before first use"
 alias startnessus="docker run -d --name nessus-docker -p 8834:8834  -e ACTIVATION_CODE='XXXX-XXX-XXX-XXXX' -e USERNAME='vagrant' -e PASSWORD='vagrant' tenableofficial/nessus"
 
 
-echo -e "${BROWN}==============================${NC}"
+echo -e "${BROWN}\n\n\n========================${NC}"
 echo -e "${BROWN}[ - OSINT - ]${NC}"
-echo -e "${BROWN}==============================${NC}"
+echo -e "${BROWN}========================\n${NC}"
 
 echo "sudomy - Subdomain Enumeration & Analysis; sudomy <domain>; runs sudomy docker container with --all flag and no nmap/gobuster; results in 'output' dir"
 alias sudomy='cd /opt/tools/osint/sudomy && docker run -v "/opt/tools/osint/sudomy/output:/usr/lib/sudomy/output" -v "/opt/tools/osint/sudomy/sudomy.api:/usr/lib/sudomy/sudomy.api" -it --rm screetsec/sudomy:v1.2.0-dev -a -d'
@@ -250,3 +256,20 @@ alias purednsbrute='puredns bruteforce -r /opt/tools/osint/dnsvalidator/resolver
 
 echo "shcheck - Security Header Check; shcheck <url> + <args>"
 alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
+
+echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
+alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
+
+echo -e "${BROWN}==============================${NC}"
+echo -e "${BROWN}[ - WEB - ]${NC}"
+echo -e "${BROWN}==============================${NC}"
+echo ""
+
+
+echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <jsfile.js>"
+function jsEndpoints() {
+   URL=$1
+   curl -Lks $URL | tac | sed "s#\\\/#\/#g" | egrep -o "src['\"]?\s*[=:]\s*['\"]?[^'\"]+.js[^'\"> ]*" | sed -r "s/^src['\"]?[=:]['\"]//g" | awk -v url=$URL '{if(length($1)) if($1 ~/^http/) print $1; else if($1 ~/^\/\//) print "https:"$1; else print url"/"$1}' | sort -fu | xargs -I '%' sh -c "echo \"\n##### %\";wget --no-check-certificate --quiet \"%\";curl -Lks \"%\" | sed \"s/[;}\)>]/\n/g\" | grep -Po \"('#####.*)|(['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})|(\.(get|post|ajax|load)\s*\(\s*['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})\" | sort -fu" | tr -d "'\""
+}
+# https://gist.github.com/gwen001/0b15714d964d99c740a7e8998bd483df
+
