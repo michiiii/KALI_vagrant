@@ -74,19 +74,6 @@ else
   echo -e "\n\n ${YELLOW}[i]${RESET} ${YELLOW}Skipping time zone${RESET} (missing: '$0 ${BOLD}--timezone <value>${RESET}')..." 1>&2
 fi
 
-#--- Installing ntp tools
-(( STAGE++ )); echo -e " ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}ntpdate${RESET} ~ keeping the time in sync"
-apt -y -qq install ntp ntpdate \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-#--- Update time
-ntpdate -b -s -u pool.ntp.org
-#--- Start service
-systemctl restart ntp
-#--- Remove from start up
-systemctl disable ntp 2>/dev/null
-#--- Only used for stats at the end
-start_time=$(date +%s)
-
 
 ##### Configure bash - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Configuring ${GREEN}bash${RESET} ~ CLI shell"
@@ -111,11 +98,23 @@ source "${file}" || source ~/.bashrc
 ##### Install colorful linux - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}colorful linux${RESET}"
 apt -y -qq install fonts-hack-ttf 
-wget https://github.com/Peltoche/lsd/releases/download/0.16.0/lsd_0.16.0_amd64.deb
-dpkg -i lsd_0.16.0_amd64.deb
+wget https://github.com/Peltoche/lsd/releases/download/0.22.0/lsd_0.22.0_amd64.deb
+dpkg -i lsd_0.22.0_amd64.deb
 apt -y -qq install fonts-powerline
 apt -y -qq install fonts-font-awesome
 apt -y -qq install grc
+
+##### Install xclip - all users
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}xclip${RESET}"
+apt -y -qq install xclip
+
+##### Install sublime - all users
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}xclip${RESET}"
+wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg
+echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+sudo apt-get update
+sudo apt-get install sublime-text
+
 
 #### Install vscode
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}vscode${RESET} ~ text editor"
@@ -124,7 +123,7 @@ apt -y -qq install curl gpg software-properties-common apt-transport-https
 curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" | tee /etc/apt/sources.list.d/vscode.list
 sudo apt update
-sudo apt install code
+apt -y -qq install code
 
 ##### Install flameshot
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}flameshot${RESET} ~ screenshot tool"
@@ -193,11 +192,11 @@ grep -q '^:command Q q' "${file}" 2>/dev/null \
   || echo -e ':command Q q' >> "${file}"                                                                 # Fix stupid typo I always make
 
 #--- Set as default editor
-export EDITOR="subl"   #update-alternatives --config editor
+export EDITOR="vim"   #update-alternatives --config editor
 file=/etc/bash.bashrc; [ -e "${file}" ] && cp -n $file{,.bkup}
 ([[ -e "${file}" && "$(tail -c 1 ${file})" != "" ]]) && echo >> "${file}"
 grep -q '^EDITOR' "${file}" 2>/dev/null \
-  || echo 'EDITOR="subl"' >> "${file}"
+  || echo 'EDITOR="vim"' >> "${file}"
 
 ##### Install go
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}go${RESET} ~ programming language"
@@ -249,8 +248,6 @@ for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc ne
   apt -y -qq install "${FILE}" \
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
-
-apt -y -qq install grc
 
 #--- Enable ssh at startup
 systemctl enable ssh
