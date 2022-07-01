@@ -240,8 +240,24 @@ function getports() {
         fi
 }
 
-echo "startnessus - Starts nessus on TCP/8834 - ensure you change the ACTIVATION_CODE before first use"
-alias startnessus="docker run -d --name nessus-docker -p 8834:8834  -e ACTIVATION_CODE='XXXX-XXX-XXX-XXXX' -e USERNAME='vagrant' -e PASSWORD='vagrant' tenableofficial/nessus"
+echo "startnessus - Starts nessus on TCP/8834 - nessus <ACTIVATION-CODE>"
+function startnessus() {
+        USER="nessus"
+        ACTIVATION_CODE=$1
+        PORT='8834'
+        echo -n "Password: "
+        read -s PASS
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                sudo docker run -d --name nessus-docker -p 8834:8834  -e ACTIVATION_CODE="$ACTIVATION_CODE" -e USERNAME="$USER" -e PASSWORD="$PASS" tenableofficial/nessus
+                echo "you can access nessus on port via the following url: https://localhost:$PORT"
+                echo "Username: $USER"
+                echo "Password: $PASS"
+        else
+                echo -e "${RED}Only please enter a project name as argument ... startnessus XXXX-XXXX-XXXX-XXXX-XXX${NC}"
+        fi
+}
 
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
@@ -260,9 +276,11 @@ alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
 echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
 alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
 
-echo -e "${YELLOW}${BOLD}\n==============================${NC}"
-echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
-echo -e "${YELLOW}${BOLD}==============================${NC}"
+
+
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
 
 
 echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <jsfile.js>"
@@ -271,5 +289,11 @@ function jsEndpoints() {
    curl -Lks $URL | tac | sed "s#\\\/#\/#g" | egrep -o "src['\"]?\s*[=:]\s*['\"]?[^'\"]+.js[^'\"> ]*" | sed -r "s/^src['\"]?[=:]['\"]//g" | awk -v url=$URL '{if(length($1)) if($1 ~/^http/) print $1; else if($1 ~/^\/\//) print "https:"$1; else print url"/"$1}' | sort -fu | xargs -I '%' sh -c "echo \"\n##### %\";wget --no-check-certificate --quiet \"%\";curl -Lks \"%\" | sed \"s/[;}\)>]/\n/g\" | grep -Po \"('#####.*)|(['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})|(\.(get|post|ajax|load)\s*\(\s*['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})\" | sort -fu" | tr -d "'\""
 }
 # https://gist.github.com/gwen001/0b15714d964d99c740a7e8998bd483df
+
+echo -e "${YELLOW}${BOLD}\n==============================${NC}"
+echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
+echo -e "${YELLOW}${BOLD}==============================${NC}"
+echo "updatealiases - update .bash_aliases with newest github version"
+alias updatealiases='(curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases) && source ~/.bash_aliases'
 
 echo -e "${YELLOW}${BOLD}\n\n==============================\n${NC}"
