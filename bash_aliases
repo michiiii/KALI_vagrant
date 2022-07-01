@@ -121,10 +121,6 @@ echo -e "${YELLOW}${BOLD}========================${NC}"
 echo "ports - netstats open tcp ports"
 alias ports="sudo netstat -tulanp"
 
-## Get header
-echo "header - shows header of a url - header <url>"
-alias header="curl -I"
-
 ## Get external IP address
 echo "exip - shows external ip"
 alias exip="curl -s http://ipinfo.io/ip"
@@ -240,7 +236,7 @@ function getports() {
         fi
 }
 
-echo "startnessus - Starts nessus on TCP/8834 - nessus <ACTIVATION-CODE>"
+echo "startnessus - Starts nessus on TCP/8834 - startnessus <ACTIVATION-CODE>"
 function startnessus() {
         USER="nessus"
         ACTIVATION_CODE=$1
@@ -255,7 +251,7 @@ function startnessus() {
                 echo "Username: $USER"
                 echo "Password: $PASS"
         else
-                echo -e "${RED}Only please enter a project name as argument ... startnessus XXXX-XXXX-XXXX-XXXX-XXX${NC}"
+                echo -e "${RED}Only please enter a Nessus Activation code as argument ... startnessus <ACTIVATION-CODE>${NC}"
         fi
 }
 
@@ -270,23 +266,25 @@ alias sudomy='cd /opt/tools/osint/sudomy && docker run -v "/opt/tools/osint/sudo
 echo "purednsburte - DNS bruteforce - purednsbrute <wordlist> <domain>"
 alias purednsbrute='puredns bruteforce -r /opt/tools/osint/dnsvalidator/resolvers.txt'
 
-echo "shcheck - Security Header Check; shcheck <url> + <args>"
-alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
-
 echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
 alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
 
-
-
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
-echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
+echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
+echo "shcheck - Security Header Check; shcheck <url> + <args>"
+alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
 
-echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <jsfile.js>"
+echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <url to js>"
 function jsEndpoints() {
-   URL=$1
-   curl -Lks $URL | tac | sed "s#\\\/#\/#g" | egrep -o "src['\"]?\s*[=:]\s*['\"]?[^'\"]+.js[^'\"> ]*" | sed -r "s/^src['\"]?[=:]['\"]//g" | awk -v url=$URL '{if(length($1)) if($1 ~/^http/) print $1; else if($1 ~/^\/\//) print "https:"$1; else print url"/"$1}' | sort -fu | xargs -I '%' sh -c "echo \"\n##### %\";wget --no-check-certificate --quiet \"%\";curl -Lks \"%\" | sed \"s/[;}\)>]/\n/g\" | grep -Po \"('#####.*)|(['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})|(\.(get|post|ajax|load)\s*\(\s*['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})\" | sort -fu" | tr -d "'\""
+        URL=$1
+        if [ $# -eq 1 ];then
+                curl -Lks $URL | tac | sed "s#\\\/#\/#g" | egrep -o "src['\"]?\s*[=:]\s*['\"]?[^'\"]+.js[^'\"> ]*" | sed -r "s/^src['\"]?[=:]['\"]//g" | awk -v url=$URL '{if(length($1)) if($1 ~/^http/) print $1; else if($1 ~/^\/\//) print "https:"$1; else print url"/"$1}' | sort -fu | xargs -I '%' sh -c "echo \"\n##### %\";wget --no-check-certificate --quiet \"%\";curl -Lks \"%\" | sed \"s/[;}\)>]/\n/g\" | grep -Po \"('#####.*)|(['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})|(\.(get|post|ajax|load)\s*\(\s*['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})\" | sort -fu" | tr -d "'\""
+        else
+                echo -e "${RED}Please enter an URL as argument ... jsEndpoints <url to js>${NC}"
+        fi
+   
 }
 # https://gist.github.com/gwen001/0b15714d964d99c740a7e8998bd483df
 
