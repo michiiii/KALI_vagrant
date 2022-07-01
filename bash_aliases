@@ -100,15 +100,6 @@ alias wdiff='/usr/bin/grc /usr/bin/wdiff'
 
 
 alias nmap="sudo nmap"
-######################
-# Folder
-#####################
-echo "work - cd straight into the projects dir"
-alias work="cd /opt/projects/"
-
-echo "wordlists - cd straight into the wordlists dir"
-alias wordlists="cd /usr/share/wordlists/"
-
 
 ###############
 # HELPER
@@ -294,4 +285,4 @@ echo -e "${YELLOW}${BOLD}==============================${NC}"
 echo "updatealiases - update .bash_aliases with newest github version"
 alias updatealiases='(curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases) && source ~/.bash_aliases'
 
-echo -e "${YELLOW}${BOLD}\n\n==============================\n${NC}"
+echo -e "${YELLOW}${BOLD}\n==============================\n${NC}"
