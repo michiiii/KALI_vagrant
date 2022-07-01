@@ -126,9 +126,6 @@ echo "unzip - uses 7z to unzip a file - unzip <filename.zip>"
 alias unzip="7z x "
 alias untar="tar -xvf "
 
-
-
-
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - DOCKER - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
@@ -152,7 +149,7 @@ function dockershellshhere() {
     sudo docker run --rm -it --entrypoint=/bin/sh -v `pwd`:/${dirname} -w /${dirname} "$@"
 }
 
-echo "autocompose - automatically create a docker compose file from a running container"
+echo "autocompose - automatically create a docker compose file from a running container - autocompose <containername>"
 alias autocompose='sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
 
 
