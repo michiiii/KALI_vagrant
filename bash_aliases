@@ -1,4 +1,6 @@
-
+BOLD="\033[01;01m"
+YELLOW='\033[0;33m'
+NC='\033[0m'
 
 # BASIC OS Commands
 alias ll="ls -l"
@@ -111,9 +113,9 @@ alias wordlists="cd /usr/share/wordlists/"
 ###############
 # HELPER
 ###############
-echo -e "${BROWN}\n\n\n========================${NC}"
-echo -e "${BROWN}[ - OS HELPER - ]${NC}"
-echo -e "${BROWN}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - OS HELPER - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
 ## List open ports
 echo "ports - netstats open tcp ports"
@@ -138,13 +140,11 @@ alias unzip="7z x "
 alias untar="tar -xvf "
 
 
-# print helpers
-BROWN='\033[0;33m'
-NC='\033[0m'
 
-echo -e "${BROWN}\n\n\n========================${NC}"
-echo -e "${BROWN}[ - DOCKER - ]${NC}"
-echo -e "${BROWN}========================\n${NC}"
+
+echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - DOCKER - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
 
 echo "dockershell - spawns dockershell for a container in it's current working directory - dockershellhere <containername>"
@@ -169,9 +169,9 @@ echo "autocompose - automatically create a docker compose file from a running co
 alias autocompose='sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
 
 
-echo -e "${BROWN}\n\n\n========================${NC}"
-echo -e "${BROWN}[ - SERVICES - ]${NC}"
-echo -e "${BROWN}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - SERVICES - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
 echo "nginxhere - spawns nginx http server in current dir"
 alias nginxhere='sudo docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" rflathers/nginxserve'
@@ -206,9 +206,9 @@ alias smb-stop="sudo systemctl stop smbd nmbd"
 
 
 
-echo -e "${BROWN}\n\n\n========================${NC}"
-echo -e "${BROWN}[ - INFRASTRUCTURE PENTEST - ]${NC}"
-echo -e "${BROWN}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
 echo "nmapfastscan - runs NMAP scanner; fast top1000 TCP; specify <IP's>"
 alias nmapfastscan="docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
@@ -244,9 +244,9 @@ echo "startnessus - Starts nessus on TCP/8834 - ensure you change the ACTIVATION
 alias startnessus="docker run -d --name nessus-docker -p 8834:8834  -e ACTIVATION_CODE='XXXX-XXX-XXX-XXXX' -e USERNAME='vagrant' -e PASSWORD='vagrant' tenableofficial/nessus"
 
 
-echo -e "${BROWN}\n\n\n========================${NC}"
-echo -e "${BROWN}[ - OSINT - ]${NC}"
-echo -e "${BROWN}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
 echo "sudomy - Subdomain Enumeration & Analysis; sudomy <domain>; runs sudomy docker container with --all flag and no nmap/gobuster; results in 'output' dir"
 alias sudomy='cd /opt/tools/osint/sudomy && docker run -v "/opt/tools/osint/sudomy/output:/usr/lib/sudomy/output" -v "/opt/tools/osint/sudomy/sudomy.api:/usr/lib/sudomy/sudomy.api" -it --rm screetsec/sudomy:v1.2.0-dev -a -d'
@@ -260,9 +260,9 @@ alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
 echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
 alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
 
-echo -e "${BROWN}==============================${NC}"
-echo -e "${BROWN}[ - WEB - ]${NC}"
-echo -e "${BROWN}==============================${NC}"
+echo -e "${YELLOW}${BOLD}==============================${NC}"
+echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
+echo -e "${YELLOW}${BOLD}==============================${NC}"
 echo ""
 
 
