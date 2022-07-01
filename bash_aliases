@@ -272,3 +272,4 @@ function jsEndpoints() {
 }
 # https://gist.github.com/gwen001/0b15714d964d99c740a7e8998bd483df
 
+echo -e "${YELLOW}${BOLD}\n\n==============================\n${NC}"
