@@ -224,6 +224,13 @@ apt -y -qq install terminator \
 apt -y -qq install jq \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
   
+#### Install massdns
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq${RESET} ~ massdns"
+apt-get -y install massdns
+
+#### Install puredns
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq${RESET} ~ massdns"
+go install github.com/d3mondev/puredns/v2@latest
   
 ##### Install evil-winrm
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}evil-winrm${RESET} ~ The ultimate WinRM shell for hacking/pentesting"
