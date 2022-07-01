@@ -113,7 +113,7 @@ alias wordlists="cd /usr/share/wordlists/"
 ###############
 # HELPER
 ###############
-echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - OS HELPER - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
@@ -142,7 +142,7 @@ alias untar="tar -xvf "
 
 
 
-echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - DOCKER - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
@@ -169,7 +169,7 @@ echo "autocompose - automatically create a docker compose file from a running co
 alias autocompose='sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/red5d/docker-autocompose'
 
 
-echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - SERVICES - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
@@ -206,7 +206,7 @@ alias smb-stop="sudo systemctl stop smbd nmbd"
 
 
 
-echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
@@ -244,7 +244,7 @@ echo "startnessus - Starts nessus on TCP/8834 - ensure you change the ACTIVATION
 alias startnessus="docker run -d --name nessus-docker -p 8834:8834  -e ACTIVATION_CODE='XXXX-XXX-XXX-XXXX' -e USERNAME='vagrant' -e PASSWORD='vagrant' tenableofficial/nessus"
 
 
-echo -e "${YELLOW}${BOLD}\n\n\n========================${NC}"
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================\n${NC}"
 
@@ -260,10 +260,9 @@ alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
 echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
 alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
 
-echo -e "${YELLOW}${BOLD}==============================${NC}"
+echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
-echo -e "${YELLOW}${BOLD}==============================${NC}"
-echo ""
+echo -e "${YELLOW}${BOLD}==============================\n${NC}"
 
 
 echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <jsfile.js>"
