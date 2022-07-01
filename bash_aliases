@@ -115,7 +115,7 @@ alias wordlists="cd /usr/share/wordlists/"
 ###############
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - OS HELPER - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
 
 ## List open ports
 echo "ports - netstats open tcp ports"
@@ -144,7 +144,7 @@ alias untar="tar -xvf "
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - DOCKER - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
 
 
 echo "dockershell - spawns dockershell for a container in it's current working directory - dockershellhere <containername>"
@@ -171,7 +171,7 @@ alias autocompose='sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - SERVICES - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
 
 echo "nginxhere - spawns nginx http server in current dir"
 alias nginxhere='sudo docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" rflathers/nginxserve'
@@ -208,7 +208,7 @@ alias smb-stop="sudo systemctl stop smbd nmbd"
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
 
 echo "nmapfastscan - runs NMAP scanner; fast top1000 TCP; specify <IP's>"
 alias nmapfastscan="docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
@@ -246,7 +246,7 @@ alias startnessus="docker run -d --name nessus-docker -p 8834:8834  -e ACTIVATIO
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================\n${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
 
 echo "sudomy - Subdomain Enumeration & Analysis; sudomy <domain>; runs sudomy docker container with --all flag and no nmap/gobuster; results in 'output' dir"
 alias sudomy='cd /opt/tools/osint/sudomy && docker run -v "/opt/tools/osint/sudomy/output:/usr/lib/sudomy/output" -v "/opt/tools/osint/sudomy/sudomy.api:/usr/lib/sudomy/sudomy.api" -it --rm screetsec/sudomy:v1.2.0-dev -a -d'
@@ -262,7 +262,7 @@ alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
-echo -e "${YELLOW}${BOLD}==============================\n${NC}"
+echo -e "${YELLOW}${BOLD}==============================${NC}"
 
 
 echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <jsfile.js>"
