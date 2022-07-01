@@ -157,8 +157,19 @@ echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - SERVICES - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
-echo "nginxhere - spawns nginx http server in current dir"
-alias nginxhere='sudo docker run --rm -it -p 80:80 -p 443:443 -v "${PWD}:/srv/data" rflathers/nginxserve'
+echo "nginxhere - spawns nginx http server in current dir - nginxhere <HTTP-PORT> <HTTPS-PORT>"
+function nginxhere() {
+        PORT_HTTP=$1
+        PORT_HTTPS=$2
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 2 ];then
+                sudo docker run --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" -v "${PWD}:/srv/data" rflathers/nginxserve
+                echo "You can access the nginxwebserver via the following url: https://localhost:$PORT"
+        else
+                echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443${NC}"
+        fi
+}
 
 echo "smbservehere - spawns smb server in current dir"
 smbservehere() {
@@ -195,16 +206,16 @@ echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
 echo "nmapfastscan - runs NMAP scanner; fast top1000 TCP; specify <IP's>"
-alias nmapfastscan="docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
+alias nmapfastscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
 
 echo "nmapfulltcpscan - runs NMAP scanner; all TCP ports; specify <IP's>"
-alias nmapfulltcpscan="docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -Pn -p- -vvvv --open --min-rate 20000 --defeat-rst-ratelimit --host-timeout 5m -oA /tmp/nmap_fulltcp --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl "
+alias nmapfulltcpscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -Pn -p- -vvvv --open --min-rate 20000 --defeat-rst-ratelimit --host-timeout 5m -oA /tmp/nmap_fulltcp --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl "
 
 echo "nmapservicescan - runs NMAP scanner; specific TCP ports; specify <IP's> and -p <PORTS>"
-alias nmapservicescan="docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -sV -vvvv --open -sC --script-timeout 15m -O -Pn -oA /tmp/nmap_servicescan "
+alias nmapservicescan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -sV -vvvv --open -sC --script-timeout 15m -O -Pn -oA /tmp/nmap_servicescan "
 
-echo "testssl-docker - testssl docker version"
-alias testssl-docker='docker run --rm -ti -v "${PWD}:/data" drwetter/testssl.sh -s -f -p -S -P -h -U --ip one --htmlfile /data/ --logfile /data/ --jsonfile-pretty /data/ --csvfile /data/ --warnings=batch'
+echo "testssl-docker - testssl docker version - testssl-docker"
+alias testssl-docker='sudo docker run --rm -ti -v "${PWD}:/data" drwetter/testssl.sh -s -f -p -S -P -h -U --ip one --htmlfile /data/ --logfile /data/ --jsonfile-pretty /data/ --csvfile /data/ --warnings=batch'
 
 echo "cme - CrackMapExec docker edition - cme <args>"
 alias cme='sudo docker run --rm -it --entrypoint=/usr/local/bin/cme --name crackmapexec-run -v "${PWD}/CrackMapExec-data:/root/.cme" byt3bl33d3r/crackmapexec'
