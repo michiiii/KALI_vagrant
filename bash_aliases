@@ -130,6 +130,8 @@ echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - DOCKER - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
+alias dcls = "sudo docker container ls -a"
+alias dils = "sudo docker images"
 
 echo "dockershell - spawns dockershell for a container in it's current working directory - dockershellhere <containername>"
 alias dockershell="sudo docker run --rm -i -t --entrypoint=/bin/bash"
@@ -170,7 +172,8 @@ function nginxhere() {
                     sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest    
                 else
                     echo "$FILE Certificate does not exist exists ... generating cert ..."
-                    sudo mkdir /opt/ssl/ && sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/ssl/server.key -out /opt/ssl/server.crt -subj '/C=US/ST=WA/L=Redmond/O=Microsoft Corporation/OU=Microsoft Corporation/CN=www.microsoft.com'
+                    sudo mkdir /opt/ssl/ 
+                    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/ssl/server.key -out /opt/ssl/server.crt -subj '/C=US/ST=WA/L=Redmond/O=Microsoft Corporation/OU=Microsoft Corporation/CN=www.microsoft.com'
                     sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest
                 fi
                 
