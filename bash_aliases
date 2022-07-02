@@ -132,6 +132,7 @@ echo -e "${YELLOW}${BOLD}========================${NC}"
 
 alias dcls="sudo docker container ls -a"
 alias dils="sudo docker images"
+alias dirm="sudo docker image rm"
 
 echo "dockershell - spawns dockershell for a container in it's current working directory - dockershellhere <containername>"
 alias dockershell="sudo docker run --rm -i -t --entrypoint=/bin/bash"
