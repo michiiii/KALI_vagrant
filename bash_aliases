@@ -131,6 +131,7 @@ echo -e "${YELLOW}${BOLD}[ - DOCKER - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
 alias dcls="sudo docker container ls -a"
+alias dcrm="sudo docker container rm"
 alias dils="sudo docker images"
 alias dirm="sudo docker image rm"
 
