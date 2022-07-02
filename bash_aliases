@@ -164,7 +164,7 @@ function nginxhere() {
         RED='\033[0;31m'
         NC='\033[0m' # No Color
         if [ $# -eq 2 ];then
-                sudo docker run --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" -v "${PWD}:/srv/data" rflathers/nginxserve
+                sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest
                 echo "You can access the nginxwebserver via the following url: https://localhost:$PORT"
         else
                 echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443${NC}"
