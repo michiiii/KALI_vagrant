@@ -164,7 +164,16 @@ function nginxhere() {
         RED='\033[0;31m'
         NC='\033[0m' # No Color
         if [ $# -eq 2 ];then
-                sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest
+                FILE="/opt/ssl/server.crt"
+                if test -f "$FILE"; then
+                    echo "$FILE Certificate exists ... continuing ..."
+                    sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest    
+                else
+                    echo "$FILE Certificate does not exist exists ... generating cert ..."
+                    sudo mkdir /opt/ssl/ && sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/ssl/server.key -out /opt/ssl/server.crt -subj '/C=US/ST=WA/L=Redmond/O=Microsoft Corporation/OU=Microsoft Corporation/CN=www.microsoft.com'
+                    sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest
+                fi
+                
                 echo "You can access the nginxwebserver via the following url: "
                 echo "http://0.0.0.0:$PORT_HTTP"
                 echo "https://0.0.0.0:$PORT_HTTPS"
