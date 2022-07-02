@@ -249,6 +249,16 @@ for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc ne
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
 
+
+#--- Get Docker files
+sudo mkdir -pv /opt/docker-collection/eyewitness
+cd /opt/docker-collection/eyewitness
+sudo wget https://github.com/FortyNorthSecurity/EyeWitness/raw/master/Python/Dockerfile
+sudo docker build --build-arg user=$USER --tag eyewitness --file ./Dockerfile .
+
+
+
+
 #--- Enable ssh at startup
 systemctl enable ssh
 
@@ -261,3 +271,4 @@ echo -e " ${YELLOW}[i]${RESET} + ${YELLOW}Reboot${RESET}"
 echo -e '\n'${BLUE}'[*]'${RESET}' '${BOLD}'Done!'${RESET}'\n\a'
 reboot now
 exit 0
+

@@ -272,6 +272,9 @@ function startnessus() {
         fi
 }
 
+echo "eyewitness - Eyewitness docker edition - eyewitness <args>"
+alias eyewitness='sudo docker run --rm -it -v /path/to/results:/tmp/EyeWitness eyewitness'
+
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
