@@ -291,6 +291,6 @@ echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
 echo -e "${YELLOW}${BOLD}==============================${NC}"
 echo "updatealiases - update .bash_aliases with newest github version"
-alias updatealiases='(curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases) && source ~/.bash_aliases'
+alias updatealiases='(curl -k -q -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases) && source ~/.bash_aliases && echo "Updated aliases..."'
 
 echo -e "${YELLOW}${BOLD}\n==============================\n${NC}"
