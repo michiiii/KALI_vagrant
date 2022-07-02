@@ -273,7 +273,7 @@ echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
 echo "shcheck - Security Header Check; shcheck <url> + <args>"
-alias shcheck='python3 /opt/tools/infra/shcheck/shcheck.py'
+alias shcheck='sudo docker run --rm -it --name shcheck miguel1337/shcheck:latest'
 
 echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <url to js>"
 function jsEndpoints() {
