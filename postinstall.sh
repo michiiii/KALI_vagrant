@@ -260,6 +260,11 @@ cd /opt/docker-collection/eyewitness
 sudo wget https://github.com/FortyNorthSecurity/EyeWitness/raw/master/Python/Dockerfile
 sudo docker build --build-arg user=$USER --tag eyewitness --file ./Dockerfile .
 
+#--- XingDumper
+sudo mkdir -pv tools/osint/
+cd tools/osint/
+sudo git clone https://github.com/l4rm4nd/XingDumper
+
 
 
 

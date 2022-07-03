@@ -161,31 +161,78 @@ echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - SERVICES - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
+
+echo "nginxsslcert - creates a self-signed SSL cert for nginx - nginx has to be restarted to apply changes"
+function nginxsslcert() {
+        SSL_LOCATION="/opt/ssl"
+
+        echo -n "Coutry [US]: "
+        read  CERT_COUNTRY
+        [ -z "$CERT_COUNTRY" ] && CERT_COUNTRY="US"
+
+        echo -n "State [WA]: "
+        read  CERT_STATE
+        [ -z "$CERT_STATE" ] && CERT_STATE="WA"
+
+        echo -n "Location [Seattle]: "
+        read  CERT_LOCATION
+        [ -z "$CERT_LOCATION" ] && CERT_STATE="WA"
+
+        echo -n "Organization: [Microsoft Corporation]: "
+        read CERT_ORGANIZATION
+        [ -z "$CERT_ORGANIZATION" ] && CERT_ORGANIZATION="Microsoft Corporation"
+
+        echo -n "Organizational Unit [Microsoft Corporation]: "
+        read CERT_OU
+        [ -z "$CERT_OU" ] && CERT_OU="Microsoft Corporation"
+
+        echo -n "Common Name (CN) [www.microsoft.com]: "
+        read CERT_CN
+        [ -z "$CERT_CN" ] && CERT_CN="www.microsoft.com"
+
+         sudo mkdir -pv $SSL_LOCATION
+         sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
+         echo "\n\nSSL Certificate and Key have been saved to: $SSL_LOCATION"
+         echo ""
+         echo ""
+}
+
+
 echo "nginxhere - spawns nginx http server in current dir - nginxhere <HTTP-PORT> <HTTPS-PORT>"
 function nginxhere() {
+
+
         PORT_HTTP=$1
         PORT_HTTPS=$2
+        NGINX_CONTAINER_NAME='nginx'
         RED='\033[0;31m'
         NC='\033[0m' # No Color
         if [ $# -eq 2 ];then
                 FILE="/opt/ssl/server.crt"
                 if test -f "$FILE"; then
                     echo "$FILE Certificate exists ... continuing ..."
-                    sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest    
+                    sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "$NGINX_CONTAINER_NAME" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest    
                 else
                     echo "$FILE Certificate does not exist exists ... generating cert ..."
-                    sudo mkdir /opt/ssl/ 
-                    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/ssl/server.key -out /opt/ssl/server.crt -subj '/C=US/ST=WA/L=Redmond/O=Microsoft Corporation/OU=Microsoft Corporation/CN=www.microsoft.com'
-                    sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "nginx" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest
+                    nginxsslcert
+                    sudo docker run -d --rm -it -p "$PORT_HTTP:80" -p "$PORT_HTTPS:443" --name "$NGINX_CONTAINER_NAME" -v "/opt/ssl/server.key:/etc/nginx/ssl/server.key" -v "/opt/ssl/server.crt:/etc/nginx/ssl/server.crt" -v "${PWD}:/srv/data" miguel1337/nginxhere:latest
                 fi
                 
                 echo "You can access the nginxwebserver via the following url: "
                 echo "http://0.0.0.0:$PORT_HTTP"
-                echo "https://0.0.0.0:$PORT_HTTPS"
+                echo "https://0.0.0.0:$PORT_HTTPS\n"
+                echo "be aware that you can always attach to the container to observe the logs:"
+                echo "docker attach $NGINX_CONTAINER_NAME\n"
+                echo "If you wish to stop the container run:"
+                echo "nginxstop\n"
+                echo "If you wish to stop the container run: "
+                echo "nginxpurge\n"
+
         else
                 echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443${NC}"
         fi
 }
+
 alias nginxstop="sudo docker container stop nginx"
 alias nginxpurge="sudo docker container stop nginx && sudo docker image rm miguel1337/nginxhere"
 
