@@ -223,13 +223,7 @@ apt -y -qq install terminator \
 apt -y -qq install jq \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
   
-#### Install massdns
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq${RESET} ~ massdns"
-apt-get -y install massdns
 
-#### Install puredns
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}jq${RESET} ~ massdns"
-go install github.com/d3mondev/puredns/v2@latest
   
 ##### Install evil-winrm
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}evil-winrm${RESET} ~ The ultimate WinRM shell for hacking/pentesting"
@@ -261,12 +255,24 @@ sudo wget https://github.com/FortyNorthSecurity/EyeWitness/raw/master/Python/Doc
 sudo docker build --build-arg user=$USER --tag eyewitness --file ./Dockerfile .
 
 #--- XingDumper
-sudo mkdir -pv tools/osint/
-cd tools/osint/
+sudo mkdir -pv /opt/tools/osint/
+cd /opt/tools/osint/
 sudo git clone https://github.com/l4rm4nd/XingDumper
 
+#### Install massdns
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}massdns${RESET} ~ massdns"
+apt-get -y install massdns
 
+#--- puredns
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}puredns${RESET} ~ puredns"
+cd /tools/osint/
+sudo git clone https://github.com/d3mondev/puredns.git
+cd puredns
+sudo make
+sudo cp puredns /usr/local/bin
 
+#--- DNS Wordlists
+sudo curl https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -o /usr/share/wordlists/best-dns-wordlist.txt
 
 #--- Enable ssh at startup
 systemctl enable ssh
