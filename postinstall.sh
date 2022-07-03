@@ -249,6 +249,10 @@ for FILE in network-manager-openvpn network-manager-pptp network-manager-vpnc ne
     || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 done
 
+##### mingw64
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}mingw64${RESET}"
+apt -y -qq install mingw-w64 \
+  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
 #--- Get Docker files
 sudo mkdir -pv /opt/docker-collection/eyewitness
