@@ -271,6 +271,12 @@ cd puredns
 sudo make
 sudo cp puredns /usr/local/bin
 
+#--- dnsvalidator
+cd /tools/osint/
+sudo git clone https://github.com/vortexau/dnsvalidator.git
+cd dnsvalidator
+sudo docker build -t dnsvalidator .
+
 #--- DNS Wordlists
 sudo curl https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -o /usr/share/wordlists/best-dns-wordlist.txt
 

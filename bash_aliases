@@ -333,8 +333,12 @@ alias sudomy='cd /opt/tools/osint/sudomy && docker run -v "/opt/tools/osint/sudo
 echo "purednsburte - DNS bruteforce - purednsbrute <wordlist> <domain>"
 alias purednsbrute='puredns bruteforce -r /opt/tools/osint/dnsvalidator/resolvers.txt'
 
+echo "dnsvalidator - update dnsvalidators"
+alias dnsvalidator="sudo docker run -v /opt/tools/osint/dnsvalidator:/dnsvalidator/output -t dnsvalidator -tL https://public-dns.info/nameservers.txt -threads 20 -o /dnsvalidator/output/resolvers.txt"
+
 echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
 alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
+
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
