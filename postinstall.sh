@@ -280,6 +280,16 @@ sudo docker build -t dnsvalidator .
 #--- DNS Wordlists
 sudo curl https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -o /usr/share/wordlists/best-dns-wordlist.txt
 
+
+# --- AD 
+sudo mkdir -pv /opt/tools/ad/
+cd /opt/tools/ad/
+sudo git clone https://github.com/fox-it/BloodHound.py.git
+cd BloodHound.py
+sudo docker build --tag bloodhound.py --file ./Dockerfile .
+
+
+
 #--- Enable ssh at startup
 systemctl enable ssh
 
