@@ -486,8 +486,9 @@ EOF
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - AD - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
-echo "bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
-alias bloodhound.py="sudo docker run -v ${PWD}:/bloodhound-data --entrypoint "/usr/local/bin/bloodhound-python" -it bloodhound.py"
+echo "docker-bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
+alias docker-bloodhound.py='sudo docker run --rm -ti -v "${PWD}:/bloodhound-data" --entrypoint="/usr/local/bin/bloodhound-python" -it "bloodhound.py"'
+alias bloodhound.py='python /opt/tools/ad/BloodHound.py'
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
