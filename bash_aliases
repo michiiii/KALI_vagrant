@@ -492,16 +492,17 @@ alias docker-bloodhound.py='sudo docker run --rm -ti -v "${PWD}:/bloodhound-data
 
 echo "neo4jhere - Start neo4j and save data in current directory - neo4jhere <PROJECT_NAME>"
 function neo4jhere(){
-        NEO4J_USER="neo4j"
-        PROJECT_NAME=$1
-        echo -n "Password: "
-        read -s PASS
         RED='\033[0;31m'
         NC='\033[0m' # No Color
         if [ $# -eq 1 ];then
-                sudo docker run -d --name neo4j_$PROJECT_NAME -p 7474:7474 -p 7687:7687 -d -v ${PWD}/neo4j/data:/data -v ${PWD}/neo4j/logs:/logs -v ${PWD}/neo4j/import:/var/lib/neo4j/import -v ${PWD}/neo4j/plugins:/plugins --env NEO4J_AUTH=NEO4J_USER/$PASS neo4j:latest
+                NEO4J_USER="neo4j"
+                PROJECT_NAME=$1
+                echo -n "Password: "
+                read -s PASS
+                sudo docker run --name "neo4j-$PROJECT_NAME" -p 7474:7474 -p 7687:7687 -d -v "${PWD}/neo4j/data:/data" -v "${PWD}/neo4j/logs:/logs" -v "${PWD}/neo4j/import:/var/lib/neo4j/import" -v "${PWD}/neo4j/plugins:/plugins" --env "NEO4J_AUTH=neo4j/$PASS" neo4j:latest
                 echo "you can access neo4j under the following:"
-                echo "Address neo4j://localhost:7474"
+                echo "neo4j web service - http://localhost:7474"
+                echo "neo4j bolt - bolt://localhost:7687"
                 echo "Username: $NEO4J_USER"
                 echo "Password: $PASS\n"
                 echo "The docker container is running under the name neo4j_$PROJECT_NAME"
