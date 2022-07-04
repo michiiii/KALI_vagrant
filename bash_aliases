@@ -531,6 +531,20 @@ function gimmetgt(){
         fi
 }
 
+echo "psobfuscatecmd - obfuscating a single command - psobfuscatecmd"
+function psobfuscatecmd(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 0 ];then
+                echo -n "PowerShell Command: "
+                read PS_COMMAND
+                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
+                
+        else
+                echo -e "${RED}psobfuscatecmd${NC}"
+        fi
+}
+
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
 echo -e "${YELLOW}${BOLD}==============================${NC}"

@@ -284,9 +284,17 @@ sudo curl https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -
 # --- AD 
 sudo mkdir -pv /opt/tools/ad/
 cd /opt/tools/ad/
+
+## --- Bloodhound.py
 sudo git clone https://github.com/fox-it/BloodHound.py.git
 cd BloodHound.py
 sudo docker build --tag bloodhound.py --file ./Dockerfile .
+
+
+## --- Invoke-Obfuscation
+sudo mkdir -pv /opt/tools/ad/
+cd /opt/tools/ad/
+sudo git clone https://github.com/danielbohannon/Invoke-Obfuscation
 
 
 
