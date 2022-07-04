@@ -488,7 +488,27 @@ echo -e "${YELLOW}${BOLD}[ - AD - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 echo "docker-bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
 alias docker-bloodhound.py='sudo docker run --rm -ti -v "${PWD}:/bloodhound-data" --entrypoint="/usr/local/bin/bloodhound-python" -it "bloodhound.py"'
-alias bloodhound.py='python /opt/tools/ad/BloodHound.py'
+
+
+echo "neo4jhere - Start neo4j and save data in current directory - neo4jhere <PROJECT_NAME>"
+function neo4jhere(){
+        NEO4J_USER="neo4j"
+        PROJECT_NAME=$1
+        echo -n "Password: "
+        read -s PASS
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                sudo docker run -d --name neo4j_$PROJECT_NAME -p 7474:7474 -p 7687:7687 -d -v ${PWD}/neo4j/data:/data -v ${PWD}/neo4j/logs:/logs -v ${PWD}/neo4j/import:/var/lib/neo4j/import -v ${PWD}/neo4j/plugins:/plugins --env NEO4J_AUTH=NEO4J_USER/$PASS neo4j:latest
+                echo "you can access neo4j under the following:"
+                echo "Address neo4j://localhost:7474"
+                echo "Username: $NEO4J_USER"
+                echo "Password: $PASS\n"
+                echo "The docker container is running under the name neo4j_$PROJECT_NAME"
+        else
+                echo -e "${RED}Please enter a project name as argument ... neo4jhere <PROJECT_NAME>${NC}"
+        fi
+}
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
