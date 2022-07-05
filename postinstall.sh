@@ -296,6 +296,12 @@ sudo mkdir -pv /opt/tools/ad/
 cd /opt/tools/ad/
 sudo git clone https://github.com/danielbohannon/Invoke-Obfuscation
 
+## -- fuxploider
+sudo mkdir -pv /opt/tools/web
+cd /opt/tools/
+sudo git clone https://github.com/almandin/fuxploider.git
+cd /opt/tools/fuxploider
+sudo docker build -t fuxploider .
 
 
 #--- Enable ssh at startup
