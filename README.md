@@ -1,12 +1,6 @@
 # KALI_vagrant
 quickly set up a new vagrant instance with KALI
 
-
-Beforehand you need to install the vbguest plugin
-```
-$ vagrant plugin install vagrant-vbguest
-```
-
 After the install run the following commands from the vagrant ssh:
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
