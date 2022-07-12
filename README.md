@@ -5,10 +5,12 @@ After the install run the following commands from the vagrant ssh:
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases
+rm .zshrc
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc" > ~/.zshrc
 source .zshrc
 sudo -i
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > /root/.bash_aliases
+rm .zshrc
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc_root" > ~/.zshrc
 source .zshrc
 exit
