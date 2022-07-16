@@ -12,7 +12,7 @@ source .zshrc
 sudo -i
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > /root/.bash_aliases
 rm .zshrc
-curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc" | sed "s/vagrant/$USER/g" > /root/.zshrc
+curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc" | sed "s/\/home\/vagrant/\/$USER\//g" > /root/.zshrc
 source /root/.zshrc
 exit
 git clone https://github.com/michiiii/KALI_vagrant.git
