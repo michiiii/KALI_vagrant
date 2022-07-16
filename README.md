@@ -3,6 +3,7 @@ quickly set up a new vagrant instance with KALI
 
 After the install run the following commands from the vagrant ssh:
 ```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases
 rm .zshrc
 curl -k -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/zshrc" > ~/.zshrc
