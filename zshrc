@@ -2,8 +2,8 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/vagrant/.oh-my-zsh"
-export HOME="/home/vagrant"
+export ZSH="$HOME/.oh-my-zsh"
+export HOME="$HOME"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
