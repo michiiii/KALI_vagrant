@@ -192,6 +192,8 @@ function nginxsslcert() {
 
          sudo mkdir -pv $SSL_LOCATION
          sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
+         
+         sudo cat $SSL_LOCATION/server.key $SSL_LOCATION/server.crt > $SSL_LOCATION/server.pem
          echo "\n\nSSL Certificate and Key have been saved to: $SSL_LOCATION"
          echo ""
          echo ""
