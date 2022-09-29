@@ -163,40 +163,32 @@ echo -e "${YELLOW}${BOLD}========================${NC}"
 
 
 echo "nginxsslcert - creates a self-signed SSL cert for nginx - nginx has to be restarted to apply changes"
-function nginxsslcert() {
-        SSL_LOCATION="/opt/ssl"
-
+function nginxsslcert () {
+        SSL_LOCATION="/opt/ssl" 
         echo -n "Coutry [US]: "
-        read  CERT_COUNTRY
-        [ -z "$CERT_COUNTRY" ] && CERT_COUNTRY="US"
-
+        read CERT_COUNTRY
+        [ -z "$CERT_COUNTRY" ] && CERT_COUNTRY="US" 
         echo -n "State [WA]: "
-        read  CERT_STATE
-        [ -z "$CERT_STATE" ] && CERT_STATE="WA"
-
+        read CERT_STATE
+        [ -z "$CERT_STATE" ] && CERT_STATE="WA" 
         echo -n "Location [Seattle]: "
-        read  CERT_LOCATION
-        [ -z "$CERT_LOCATION" ] && CERT_STATE="WA"
-
+        read CERT_LOCATION
+        [ -z "$CERT_LOCATION" ] && CERT_STATE="WA" 
         echo -n "Organization: [Microsoft Corporation]: "
         read CERT_ORGANIZATION
-        [ -z "$CERT_ORGANIZATION" ] && CERT_ORGANIZATION="Microsoft Corporation"
-
+        [ -z "$CERT_ORGANIZATION" ] && CERT_ORGANIZATION="Microsoft Corporation" 
         echo -n "Organizational Unit [Microsoft Corporation]: "
         read CERT_OU
-        [ -z "$CERT_OU" ] && CERT_OU="Microsoft Corporation"
-
+        [ -z "$CERT_OU" ] && CERT_OU="Microsoft Corporation" 
         echo -n "Common Name (CN) [www.microsoft.com]: "
         read CERT_CN
-        [ -z "$CERT_CN" ] && CERT_CN="www.microsoft.com"
-
-         sudo mkdir -pv $SSL_LOCATION
-         sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
-         
-         sudo cat $SSL_LOCATION/server.key $SSL_LOCATION/server.crt > $SSL_LOCATION/server.pem
-         echo "\n\nSSL Certificate and Key have been saved to: $SSL_LOCATION"
-         echo ""
-         echo ""
+        [ -z "$CERT_CN" ] && CERT_CN="www.microsoft.com" 
+        sudo mkdir -pv $SSL_LOCATION
+        sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$SSL_LOCATION/server.key" -out "$SSL_LOCATION/server.crt" -subj "/C=$CERT_COUNTRY/ST=$CERT_STATE/L=$CERT_LOCATION/O=$CERT_ORGANIZATION/OU=$CERT_OU/CN=$CERT_CN"
+        sudo cat $SSL_LOCATION/server.key $SSL_LOCATION/server.crt | sudo tee $SSL_LOCATION/server.pem
+        echo "\n\nSSL Certificate and Key have been saved to: $SSL_LOCATION"
+        echo ""
+        echo ""
 }
 
 
