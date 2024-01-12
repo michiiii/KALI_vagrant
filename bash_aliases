@@ -98,6 +98,7 @@ alias traceroute='/usr/bin/grc /usr/sbin/traceroute'
 ## grc wdiff alias
 alias wdiff='/usr/bin/grc /usr/bin/wdiff'
 
+alias history='omz_history -f'
 
 alias nmap="sudo nmap"
 
