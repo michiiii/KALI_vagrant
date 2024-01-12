@@ -99,4 +99,7 @@ setopt globdots
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
 source $HOME/.bash_aliases
+
+alias history='omz_history -f'
