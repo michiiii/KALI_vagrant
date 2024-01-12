@@ -104,9 +104,9 @@ setopt globdots
 show_execution_start_time() {
     local start_time
     start_time=$(date +"%Y-%m-%d %H:%M:%S")
-    echo "==================================================="
+    echo "=========================================="
     echo "Execution started at: $start_time"
-    echo "==================================================="
+    echo "=========================================="
     echo
 }
 
@@ -114,9 +114,9 @@ show_execution_finish_time() {
     local finish_time
     finish_time=$(date +"%Y-%m-%d %H:%M:%S")
     echo
-    echo "==================================================="
+    echo "=========================================="
     echo "Execution finished at: $finish_time"
-    echo "==================================================="
+    echo "=========================================="
     echo
 }
 
