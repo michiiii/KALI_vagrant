@@ -100,6 +100,35 @@ setopt globdots
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source $HOME/.bash_aliases
+# Define a function to show timestamps before and after command execution
+show_execution_start_time() {
+    local start_time
+    start_time=$(date +"%Y-%m-%d %H:%M:%S")
+    echo "====================================="
+    echo "Execution started at: $start_time"
+    echo "====================================="
+    echo
+}
 
-alias history='omz_history -f'
+show_execution_finish_time() {
+    local finish_time
+    finish_time=$(date +"%Y-%m-%d %H:%M:%S")
+    echo
+    echo "====================================="
+    echo "Execution finished at: $finish_time"
+    echo "====================================="
+    echo
+}
+
+
+# Hook to run before each command
+preexec() {
+    show_execution_start_time "$@"
+}
+
+# Hook to run after each command
+precmd() {
+    show_execution_finish_time
+}
+
+source $HOME/.bash_aliases
