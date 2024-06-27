@@ -103,20 +103,20 @@ setopt globdots
 # Define a function to show timestamps before and after command execution
 show_execution_start_time() {
     local start_time
-    start_time=$(date +"%Y-%m-%d %H:%M:%S")
-    echo "=========================================="
-    echo "Execution started at: $start_time"
-    echo "=========================================="
+    start_time=$(date +"%Y-%m-%d %H:%M:%S %Z")
+    echo "\033[1m==========================================\033[0m"
+    echo "\033[1mExecution started at:\033[0m $start_time"
+    echo "\033[1m==========================================\033[0m"
     echo
 }
 
 show_execution_finish_time() {
     local finish_time
-    finish_time=$(date +"%Y-%m-%d %H:%M:%S")
+    finish_time=$(date +"%Y-%m-%d %H:%M:%S %Z")
     echo
-    echo "=========================================="
-    echo "Execution finished at: $finish_time"
-    echo "=========================================="
+    echo "\033[1m==========================================\033[0m"
+    echo -e "\033[1mExecution finished at\033[0m: $finish_time"
+    echo "\033[1m==========================================\033[0m"
     echo
 }
 
