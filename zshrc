@@ -131,4 +131,11 @@ precmd() {
     show_execution_finish_time
 }
 
+# Set GOPATH
+export GOPATH="$HOME/go"
+
+# Add GOPATH/bin to PATH
+export PATH="$GOPATH/bin:$PATH"
+
 source $HOME/.bash_aliases
+
