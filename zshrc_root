@@ -99,4 +99,11 @@ setopt globdots
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# Set GOPATH
+export GOPATH="$HOME/go"
+
+# Add GOPATH/bin to PATH
+export PATH="$GOPATH/bin:$PATH"
+
 source $HOME/.bash_aliases
