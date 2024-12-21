@@ -792,6 +792,10 @@ echo -e "${YELLOW}${BOLD}==============================${NC}"
 echo "updatealiases - update .bash_aliases with newest github version"
 alias updatealiases='(curl -k -q -L -f "https://raw.githubusercontent.com/michiiii/KALI_vagrant/master/bash_aliases" > ~/.bash_aliases) && source ~/.bash_aliases && echo "Updated aliases..."'
 
+# Set GOPATH
+export GOPATH="$HOME/go"
 
+# Add GOPATH/bin to PATH
+export PATH="$GOPATH/bin:$PATH"
 
 echo -e "${YELLOW}${BOLD}\n==============================\n${NC}"
