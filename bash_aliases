@@ -5,7 +5,7 @@ NC='\033[0m'
 # BASIC OS Commands
 alias ll="ls -l"
 alias la="ls -la"
-
+alias lla='find "$(pwd)" -type f'
 alias chmod='chmod -c'
 alias rw-='chmod 600'
 alias rwx='chmod 700'
