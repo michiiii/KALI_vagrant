@@ -101,7 +101,6 @@ alias wdiff='/usr/bin/grc /usr/bin/wdiff'
 alias history='omz_history -f'
 
 alias nmap="sudo nmap"
-
 ###############
 # HELPER
 ###############
@@ -350,6 +349,11 @@ alias smb-stop="sudo systemctl stop smbd nmbd"
 echo -e "${YELLOW}${BOLD}\n========================${NC}"
 echo -e "${YELLOW}${BOLD}[ - INFRA PENTEST - ]${NC}"
 echo -e "${YELLOW}${BOLD}========================${NC}"
+
+echo "nthash - returns nthash of a password - nthash <password>"
+nthash () {
+    iconv -f ASCII -t UTF-16LE <(printf "$1") | openssl dgst -md4
+}
 
 echo "getports - returns ports of a nmap scan - getports <nmapfile.nmap>"
 function getports() {
