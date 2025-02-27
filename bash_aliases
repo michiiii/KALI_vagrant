@@ -670,6 +670,15 @@ function psobfuscaterecursively(){
 }
 
 echo -e "${YELLOW}${BOLD}\n==============================${NC}"
+echo -e "${YELLOW}${BOLD}[ - MISC - ]${NC}"
+echo -e "${YELLOW}${BOLD}==============================${NC}"
+echo "uuid - generate UUID"
+
+uuid() {         
+    python3 -c "import uuid; print(uuid.uuid4())"
+}
+
+echo -e "${YELLOW}${BOLD}\n==============================${NC}"
 echo -e "${YELLOW}${BOLD}[ - ALIASES - ]${NC}"
 echo -e "${YELLOW}${BOLD}==============================${NC}"
 echo "updatealiases - update .bash_aliases with newest github version"
